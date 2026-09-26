@@ -1,0 +1,1056 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c3a56">
+<title>Flashcard Phẫu thuật — Dụng cụ · Kim chỉ · Mũi khâu · Vô trùng</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!--
+  App flashcard kỹ thuật phẫu thuật — Thiên Phúc (Y6, chưa vào phòng mổ thực chiến)
+  Mục tiêu mỗi ngày 15–20 phút: nhận diện dụng cụ + thuộc công dụng trước khi vào mổ thật.
+  Nội dung: 53 thẻ / 4 bộ — nguồn slide Ngoại cơ sở UMP (Huỳnh Bá Tấn, Trần Đức Huy),
+  WHO Surgical Care at the District Hospital, QĐ 3916/QĐ-BYT. Xem "Tài liệu nguồn/".
+  Lộ trình ôn: Leitner (Quên/Khó/Tốt/Dễ → 0/1/2/4/7/14 ngày), tối đa 10 thẻ mới/ngày.
+-->
+<style>
+:root{
+  font-family:"Segoe UI Variable Text",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --bg:#eef3f7; --card-bg:#ffffff; --surface-2:#f5f8fb;
+  --text:#0f2029; --text-secondary:#5c6d7a; --line:#dee6ed; --line-strong:#ccd8e1;
+  --blue:#0f6da8; --blue-dark:#0b4f7a; --blue-light:#e7f1f8;
+  --header-bg:#0c3a56; --header-grad:linear-gradient(135deg,#0e4c72 0%,#0a3450 100%);
+  --red:#b3261e; --red-bg:#fdecec; --green:#1c7a4a; --green-bg:#e6f4ec;
+  --yellow:#8a5300; --yellow-bg:#fdf3dc; --orange:#b4560a; --orange-bg:#fdf0e3;
+  --tag-bg:#eef2f6; --tag-text:#3c4c58; --btn-secondary-bg:#eef2f6; --btn-secondary-text:#22323d;
+  --ink:#54708a; --fig-bg:#f7fafc;
+  --shadow:0 1px 2px rgba(15,32,41,.05),0 3px 10px rgba(15,32,41,.05);
+  --shadow-md:0 2px 4px rgba(15,32,41,.06),0 10px 26px rgba(15,32,41,.09);
+  --r-card:14px; --r-ctl:11px;
+  --key-blue:#0a4c74; --key-secondary:#ccd8e1; --key-danger:#7d1a14; --key-green:#166239;
+}
+html.dark{
+  --bg:#0f151b; --card-bg:#18212a; --surface-2:#1e2833;
+  --text:#dbe4ec; --text-secondary:#8b9aa8; --line:#28333e; --line-strong:#35414d;
+  --blue:#4ea9dc; --blue-dark:#2f7fae; --blue-light:#1b2c39;
+  --red:#f2837a; --red-bg:#331a19; --green:#62c98a; --green-bg:#14291e;
+  --yellow:#e6b357; --yellow-bg:#2c2410; --orange:#e89150; --orange-bg:#2e2114;
+  --tag-bg:#222c36; --tag-text:#b7c3cd; --btn-secondary-bg:#26313d; --btn-secondary-text:#d3dde5;
+  --ink:#7fa1c0; --fig-bg:#141c24;
+  --key-blue:#1c6f9f; --key-secondary:#1b242e; --key-danger:#5f1712; --key-green:#1f7a45;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+::selection{background:color-mix(in oklab,var(--blue) 26%,transparent)}
+*{scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
+
+/* ===== Header ===== */
+header.app{
+  background:var(--header-grad);color:#f2f7fa;padding:14px 16px 12px;
+  position:sticky;top:0;z-index:30;box-shadow:0 2px 10px rgba(8,24,36,.28);
+}
+.h-row{display:flex;align-items:center;gap:10px;max-width:760px;margin:0 auto}
+.h-title{font-size:18px;font-weight:650;letter-spacing:.2px}
+.h-sub{font-size:12px;opacity:.75;margin-top:1px}
+.h-right{margin-left:auto;display:flex;gap:8px}
+.icon-btn{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:#f2f7fa;
+  border-radius:10px;width:36px;height:36px;font-size:16px;cursor:pointer;display:grid;place-items:center;
+}
+.icon-btn:active{transform:translateY(1px)}
+.today-line{max-width:760px;margin:8px auto 0;font-size:12.5px;color:#cfe3f0;display:flex;gap:14px;flex-wrap:wrap}
+
+/* ===== Chips chọn bộ ===== */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 12px;max-width:760px;margin:0 auto;position:relative;mask-image:linear-gradient(90deg,#000 92%,transparent)}
+.chip{
+  flex:0 0 auto;border:1px solid var(--line-strong);background:var(--card-bg);color:var(--text-secondary);
+  border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:600;cursor:pointer;
+  box-shadow:0 1px 2px rgba(15,32,41,.05);
+}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.chip .n{opacity:.65;font-weight:500;font-size:12px;margin-left:4px}
+
+/* ===== Tabs ===== */
+.tabs{display:flex;gap:6px;max-width:760px;margin:2px auto 0;padding:0 12px 10px}
+.tab{
+  flex:1;text-align:center;padding:9px 6px;border-radius:var(--r-ctl);cursor:pointer;font-weight:650;font-size:14px;
+  background:var(--btn-secondary-bg);color:var(--btn-secondary-text);border:1px solid var(--line);
+}
+.tab.on{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:inset 0 -3px 0 var(--key-blue)}
+
+main{max-width:760px;margin:0 auto;padding:12px 12px 90px}
+
+/* ===== Thẻ học ===== */
+.session-head{display:flex;justify-content:space-between;align-items:baseline;margin:4px 2px 10px;font-size:13px;color:var(--text-secondary)}
+.session-head b{color:var(--text)}
+.pbar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin:0 2px 14px}
+.pbar>i{display:block;height:100%;background:var(--blue);border-radius:99px;transition:width .25s}
+
+.cardwrap{perspective:1400px}
+.fcard{
+  position:relative;min-height:390px;border-radius:var(--r-card);transform-style:preserve-3d;
+  transition:transform .45s cubic-bezier(.2,.7,.25,1);cursor:pointer;
+}
+.fcard.flipped{transform:rotateY(180deg)}
+.face{
+  position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--r-card);
+  background:var(--card-bg);box-shadow:var(--shadow-md);border:1px solid var(--line);
+  padding:18px 18px 14px;display:flex;flex-direction:column;
+}
+.face.back{transform:rotateY(180deg)}
+.decktag{align-self:flex-start;font-size:11.5px;font-weight:700;letter-spacing:.4px;color:var(--blue);background:var(--blue-light);border-radius:6px;padding:3px 9px;text-transform:uppercase}
+.figbox{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 4px;min-height:150px}
+.figbox svg{width:100%;max-width:420px;height:auto;color:var(--ink)}
+.hint-flip{text-align:center;font-size:12px;color:var(--text-secondary);opacity:.8}
+.cname{text-align:center;font-size:21px;font-weight:700;margin:2px 0}
+.cname .en{display:block;font-size:13px;font-weight:500;color:var(--text-secondary);margin-top:3px}
+
+/* mặt sau */
+.back .b-title{font-size:16px;font-weight:700;margin:2px 0 8px}
+.back .use{font-size:15px;margin:0 0 10px}
+.back .use b{color:var(--blue)}
+.pts{margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:7px;overflow:auto}
+.pts li{font-size:13.5px;color:var(--text-secondary);display:flex;gap:8px;align-items:flex-start}
+.pts li::before{content:"";flex:0 0 7px;height:7px;border-radius:2px;background:var(--blue);margin-top:6px;transform:rotate(45deg)}
+.pts li b{color:var(--text)}
+
+/* ===== Nút đánh giá ===== */
+.ratebar{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;padding:10px 12px calc(12px + env(safe-area-inset-bottom));
+  background:color-mix(in oklab,var(--bg) 82%,transparent);backdrop-filter:blur(8px);
+  border-top:1px solid var(--line);display:none;gap:8px;max-width:760px;margin:0 auto;
+}
+.ratebar.show{display:flex}
+.rbtn{
+  flex:1;border:none;border-radius:12px;padding:12px 6px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;
+  display:flex;flex-direction:column;gap:2px;align-items:center;min-height:56px;justify-content:center;
+}
+.rbtn small{font-weight:500;font-size:10.5px;opacity:.85}
+.r-forgot{background:var(--red);box-shadow:0 3px 0 var(--key-danger)}
+.r-hard{background:var(--yellow);box-shadow:0 3px 0 #6b4409;color:#fff}
+.r-good{background:var(--green);box-shadow:0 3px 0 var(--key-green)}
+.r-easy{background:var(--blue);box-shadow:0 3px 0 var(--key-blue)}
+.rbtn:active{transform:translateY(2px);box-shadow:none}
+
+.emptybox{
+  background:var(--card-bg);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow);
+  padding:34px 20px;text-align:center;
+}
+.emptybox .big{font-size:38px;margin-bottom:6px}
+.emptybox h3{margin:0 0 6px;font-size:17px}
+.emptybox p{margin:0 0 16px;color:var(--text-secondary);font-size:14px}
+.btn{
+  border:none;border-radius:12px;padding:12px 18px;font-size:14.5px;font-weight:700;cursor:pointer;
+  background:var(--blue);color:#fff;box-shadow:0 3px 0 var(--key-blue);
+}
+.btn:active{transform:translateY(2px);box-shadow:none}
+.btn.ghost{background:var(--btn-secondary-bg);color:var(--btn-secondary-text);box-shadow:0 3px 0 var(--key-secondary)}
+
+/* ===== Quiz ===== */
+.quiz-card{background:var(--card-bg);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+.quiz-fig{display:flex;justify-content:center;padding:6px 0 2px}
+.quiz-fig svg{width:100%;max-width:400px;height:auto;color:var(--ink)}
+.quiz-q{font-size:19px;font-weight:700;text-align:center;margin:6px 0 2px}
+.quiz-q .en{display:block;font-size:12.5px;color:var(--text-secondary);font-weight:500}
+.quiz-ask{text-align:center;font-size:13px;color:var(--text-secondary);margin-bottom:12px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{
+  text-align:left;border:1.5px solid var(--line-strong);background:var(--surface-2);color:var(--text);
+  border-radius:12px;padding:12px 14px;font-size:14px;cursor:pointer;font-family:inherit;line-height:1.45;
+}
+.opt:not(:disabled):hover{border-color:var(--blue)}
+.opt.ok{border-color:var(--green);background:var(--green-bg);font-weight:650}
+.opt.bad{border-color:var(--red);background:var(--red-bg)}
+.quiz-top{display:flex;justify-content:space-between;font-size:13px;color:var(--text-secondary);margin:2px 2px 10px}
+.score-big{font-size:42px;font-weight:800;text-align:center;margin:8px 0}
+.score-big span{color:var(--blue)}
+.wronglist{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.wronglist .w{background:var(--red-bg);border:1px solid color-mix(in oklab,var(--red) 35%,transparent);border-radius:10px;padding:10px 12px;font-size:13.5px}
+.wronglist .w b{display:block;margin-bottom:2px}
+
+/* ===== Stats ===== */
+.stat-card{background:var(--card-bg);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+.stat-card h3{margin:0 0 12px;font-size:15px}
+.srow{margin-bottom:12px}
+.srow .lbl{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px}
+.srow .lbl b{font-weight:650}
+.srow .bar{display:flex;height:9px;border-radius:99px;overflow:hidden;background:var(--line)}
+.srow .bar i{display:block;height:100%}
+.b-new{background:var(--line-strong)} .b-learn{background:var(--orange)} .b-master{background:var(--green)}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--text-secondary);margin-top:10px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.kv:last-child{border-bottom:none}
+.kv b{font-weight:650}
+
+footer.src{max-width:760px;margin:0 auto;padding:16px 12px 40px;font-size:11.5px;color:var(--text-secondary);line-height:1.6}
+@media (min-width:600px){ .fcard{min-height:420px} }
+</style>
+</head>
+<body>
+
+<header class="app">
+  <div class="h-row">
+    <div>
+      <div class="h-title">Flashcard Phẫu thuật</div>
+      <div class="h-sub">Dụng cụ · Kim chỉ · Mũi khâu · Vô trùng &amp; phòng mổ</div>
+    </div>
+    <div class="h-right">
+      <button class="icon-btn" id="darkBtn" title="Sáng / tối">◐</button>
+    </div>
+  </div>
+  <div class="today-line">
+    <span id="todayLine">—</span>
+  </div>
+</header>
+
+<div class="chips" id="chips"></div>
+
+<div class="tabs">
+  <div class="tab on" data-tab="study">Học</div>
+  <div class="tab" data-tab="quiz">Kiểm tra</div>
+  <div class="tab" data-tab="stats">Thống kê</div>
+</div>
+
+<main>
+  <section id="view-study"></section>
+  <section id="view-quiz" style="display:none"></section>
+  <section id="view-stats" style="display:none"></section>
+</main>
+
+<div class="ratebar" id="ratebar">
+  <button class="rbtn r-forgot" data-r="0">Quên<small>học lại ngay</small></button>
+  <button class="rbtn r-hard" data-r="1">Khó<small>1 ngày</small></button>
+  <button class="rbtn r-good" data-r="2">Tốt<small>2 ngày</small></button>
+  <button class="rbtn r-easy" data-r="3">Dễ<small>7+ ngày</small></button>
+</div>
+
+<footer class="src">
+  Nguồn nội dung: Slide Ngoại khoa cơ sở UMP (ThS.BS Huỳnh Bá Tấn — dụng cụ &amp; vô khuẩn; ThS.BS Trần Đức Huy — kim chỉ),
+  <i>Surgical Care at the District Hospital</i> (WHO, bản dịch VN), QĐ 3916/QĐ-BYT về kiểm soát nhiễm khuẩn —
+  bản gốc trong thư mục <b>Tài liệu nguồn</b>. Biên soạn 26/9/2026 · thuật ngữ theo cách dân mổ VN gọi (song ngữ VN–Anh).
+</footer>
+
+<script>
+"use strict";
+/* ================= DỮ LIỆU 52 THẺ ================= */
+const DECKS = {
+  1:{name:"Dụng cụ", color:"var(--blue)"},
+  2:{name:"Kim & chỉ", color:"#0e7490"},
+  3:{name:"Nút & mũi khâu", color:"#6d28d9"},
+  4:{name:"Vô trùng & phòng mổ", color:"#b4560a"}
+};
+
+const CARDS = [
+/* ---------- BỘ 1: DỤNG CỤ ---------- */
+{id:"kelly",deck:1,name:"Kẹp Kelly",en:"Kelly forceps · hemostat",
+use:"Kẹp mạch máu nhỏ để <b>cầm máu</b>, kẹp mô/giàn mạch khi bóc tách — kẹp thông dụng nhất trên mâm mổ.",
+pts:["Không có răng ở mõm — chỉ có <b>khía ngang</b> (serration) nên tổn thương mô ít hơn Kocher","Dân mổ gọi tắt «Kelly», xin kiểu: «Kelly!»","Có bản thẳng và bản cong ½ vòng"]},
+{id:"kocher",deck:1,name:"Kẹp Kocher",en:"Kocher forceps (toothed)",
+use:"Kẹp <b>mô dai, chắc</b>: dây chằng, mạc, cuống mạch; giữ mép vết mổ / mép khăn phủ.",
+pts:["Có <b>răng ở đỉnh</b> kẹp → bám chắc, không tuột","Cấm kẹp ruột, mô mỏng manh — răng xuyên phá tổ chức","Nhận diện nhanh: cùng dáng Kelly nhưng mõm có răng"]},
+{id:"mosquito",deck:1,name:"Kẹp Mosquito",en:"Mosquito / Halsted forceps",
+use:"Bản <b>nhỏ mảnh nhất</b> trong họ kẹp mạch: kẹp mạch máu nhỏ, cầm máu vùng hẹp, phẫu tích tinh tế (mặt, cổ, tay, trẻ em).",
+pts:["Cùng cấu tạo Kelly/Kocher nhưng size mini (~12,5 cm)","Mõm rất nhọn, khía mịn","Có bản có răng và bản trơn"]},
+{id:"babcock",deck:1,name:"Kẹp Babcock",en:"Babcock forceps (atraumatic)",
+use:"Kẹp — nâng <b>ruột, ống</b> (ruột non, manh tràng, niệu quản) mà <b>không tổn thương</b>.",
+pts:["Mõm thìa 2 lá ôm cong, trơn không răng — lực ép dàn đều","«Babcock = ruột» (atraumatic)","Chỉ nâng/giữ nhẹ — không phải kẹp ruột chắc như Doyen"]},
+{id:"allis",deck:1,name:"Kẹp Allis",en:"Allis forceps",
+use:"Kẹp <b>mô chắc</b> cần giữ chặt: mép mạc, mô sắp cắt bỏ, giữ khối bệnh khi mổ.",
+pts:["Răng dọc chạy suốt mõm, khớp vào nhau","Bóp nát mô — chỉ dùng mô chắc hoặc mô bỏ đi","Không dùng trên ruột, mạch"]},
+{id:"pincer",deck:1,name:"Pincer giải phẫu",en:"Anatomical forceps (không răng)",
+use:"Cầm, giữ <b>mô mềm, nội tạng</b>, cầm gạc lau, giữ kim nhỏ — đầu trơn không làm tổn thương.",
+pts:["Đầu trơn mượt, mảnh","Dùng cho tổ chức mỏng manh: phúc mạc, ruột, mạch","Nhược điểm: giữ da không chắc bằng loại có răng"]},
+{id:"adson",deck:1,name:"Pincer có răng",en:"Tissue forceps with teeth (Adson)",
+use:"Giữ <b>mép vết thương da</b> khi khâu — răng nhỏ bám chắc mép da mà không bóp nát.",
+pts:["1×2 răng ở mõm; Adson bản ngắn dùng cho da","Răng chỉ đè nhẹ mép da, không kẹp sâu","Kẹp mô sâu/mềm bằng pincer trơn, không dùng loại này"]},
+{id:"needleholder",deck:1,name:"Kìm cầm kim (kìm chỉ)",en:"Needle holder (Mayo-Hegar)",
+use:"<b>Cầm kim khi khâu</b>, kéo chỉ qua mô; mặt kẹp khía mịn giữ kim không xoay.",
+pts:["Cầm đúng: ngón cái + ngón đeo nhẫn vào vòng, ngón trỏ giữ thân — không nắm cả tay trừ khi cần lực","Thân ngắn, mõm mập hơn kẹp Kelly","Kim kẹp ở 1/3–1/4 mõm tính từ mũi kim"]},
+{id:"olsen",deck:1,name:"Kìm Olsen-Hegar",en:"Olsen-Hegar needle holder",
+use:"Kìm cầm kim <b>kèm kéo cắt chỉ</b> ngay gần khớp — khâu da / mổ nhỏ không cần đổi sang kéo.",
+pts:["Nhìn như Mayo-Hegar + mỏ cắt chỉ","Tiện khi phụ mổ khâu da một mình","Vừa khâu vừa «cắt» liền một nhịp"]},
+{id:"mayoscissors",deck:1,name:"Kéo Mayo",en:"Mayo scissors",
+use:"Bản <b>dày, chắc</b>: cắt chỉ, cắt băng — gạc, cắt mô dày (gân, mạc).",
+pts:["Bản thẳng → cắt chỉ/khăn; bản cong → cắt mô","Đầu tù (blunt) bảo vệ tổ chức bên dưới","Kéo cắt chỉ thường dùng Mayo thẳng — không cắt chỉ bằng Metzenbaum"]},
+{id:"metz",deck:1,name:"Kéo Metzenbaum",en:"Metzenbaum scissors",
+use:"Bản <b>mảnh, cong</b>: cắt và bóc tách <b>mô mềm</b> (phúc mạc, mô nâng, thành ruột).",
+pts:["Dài, mảnh, cong — «Metz = mô mềm»","Mũi tù dùng tách đùn (blunt dissection) được","Không cắt chỉ bằng Metz — cùn kéo"]},
+{id:"scalpel3",deck:1,name:"Dao mổ cán số 3",en:"Scalpel handle No.3 + blade 10/11/15",
+use:"Mổ <b>tinh tế diện nhỏ</b>: rạch da, bóc tách tinh vi.",
+pts:["Lưỡi <b>10</b>: bụng cong lớn — rạch da, mô thường dụng nhất","Lưỡi <b>11</b>: mũi giáo nhọn — đâm rạch (mổ áp-xe, mở rạch hẹp)","Lưỡi <b>15</b>: bụng cong nhỏ — đường rạch cong tinh tế","Lắp / tháo lưỡi bằng kìm — tuyệt đối không dùng tay không"]},
+{id:"scalpel4",deck:1,name:"Dao mổ cán số 4",en:"Scalpel handle No.4 + blade 20–24",
+use:"Mổ <b>lớn</b>: rạch da dài, cắt mô dày (thành bụng, khối lớn).",
+pts:["Lưỡi 20/21/22/23/24 to tương ứng cán dài","Cán dài và chắc hơn cán số 3","Chọn lưỡi theo độ dày mô cần cắt"]},
+{id:"langenbeck",deck:1,name:"Retractor Langenbeck",en:"Langenbeck retractor",
+use:"Tụt mép vết mổ <b>nông</b>: kéo da, cơ thành bụng để lộ tầng sâu.",
+pts:["Lưỡi phẳng chữ L, một đầu (có loại 2 đầu khác cỡ)","Phụ mổ cầm — kéo lâu mỏi tay","Vết mổ sâu hơn → chuyển Deaver"]},
+{id:"deaver",deck:1,name:"Retractor Deaver",en:"Deaver retractor («thanh niên trai»)",
+use:"Tụt cơ quan <b>sâu</b> trong mổ bụng: gan, lách, ruột, bàng quang — giữ khỏi chặn tầm nhìn.",
+pts:["Lưỡi rộng cong như lá","Thường lót gạc giữa retractor và gan","Kéo liên tục rất mỏi tay — chỗ vui VN gọi «thanh niên trai» chuyên kéo Deaver"]},
+{id:"balfour",deck:1,name:"Retractor Balfour",en:"Balfour self-retaining retractor",
+use:"<b>Tự giữ</b> vết mổ bụng mở — không cần người kéo: 2 lá bên + lá giữa nâng tử cung / bàng quang.",
+pts:["Khung đeo vào mép vết mổ, vặn ốc nở ra","Mổ bụng — khung chậu hay dùng nhất","Luôn lót gạc bảo vệ ruột trước khi vặn lá"]},
+{id:"doyen",deck:1,name:"Kẹp ruột Doyen",en:"Doyen atraumatic bowel clamp",
+use:"Kẹp ruột <b>mềm</b> khi cắt nối ruột: chặn nội dung ruột, giữ đoạn ruột, <b>không bóp nát</b> tổ chức.",
+pts:["Lưỡi dài mảnh có độ đàn hồi — ép nhẹ (atraumatic)","Thường quấn băng cao su giảm chèn ép","Phía đoạn ruột cắt bỏ mới dùng kẹp chắc (kiểu Payr)"]},
+{id:"yankauer",deck:1,name:"Hút Yankauer",en:"Yankauer suction tip",
+use:"<b>Hút máu, dịch</b> trong vùng mổ — giữ tầm nhìn rõ.",
+pts:["Đầu cứng, lỗ rộng, có loại có lỗ thông trên cán","Nối ống hút mềm vào can","Không áp sát hút liên tục vào mô parenchyma"]},
+
+/* ---------- BỘ 2: KIM & CHỈ ---------- */
+{id:"vicryl",deck:2,name:"Chỉ Vicryl",en:"Polyglactin 910 · absorbable braided",
+use:"Chỉ <b>tiêu dần</b> đa sợi: khâu cơ, mạc, khâu ruột — dạ dày, đóng dưới da.",
+pts:["Giữ lực ~3 tuần, tiêu hoàn toàn ~2 tháng","Bện (braided) → cột nút dễ, chắc","Nơi nhiễm khuẩn: hấp thụ nhanh và dễ nhiễm hơn đơn sợi — cân nhắc","Vicryl Rapid tiêu nhanh (~10 ngày) cho niêm mạc, mô mau lành"]},
+{id:"pds",deck:2,name:"Chỉ PDS",en:"Polydioxanone · absorbable monofilament",
+use:"Chỉ tiêu dần <b>chậm</b>: đóng <b>mạc thành bụng</b>, khâu gân, mô cần lực giữ lâu (~6 tuần).",
+pts:["Đơn sợi → vi khuẩn khó trú, chấp nhận được nơi nhiễm nhẹ hơn đa sợi","Có «memory» — nút hay bung, cần cột thêm nửa nút","Tiêu hoàn thành ~6 tháng; cỡ 0 hoặc 1 đóng mạc phổ biến"]},
+{id:"silk",deck:2,name:"Chỉ silk",en:"Silk · nonabsorbable braided",
+use:"Chỉ <b>không tiêu</b>: buộc mạch (tie cuống), cố định drain vào da.",
+pts:["Đa sợi bện — cột nút <b>chắc nhất</b>, cảm giác tay tốt","Phản ứng mô rõ; vi khuẩn trú trong bện → tránh nơi nhiễm","Dân mổ hay dùng buộc cuống mạch, mạc"]},
+{id:"nylon",deck:2,name:"Chỉ nylon",en:"Polyamide · nonabsorbable monofilament",
+use:"Chỉ <b>không tiêu</b> đơn sợi: khâu <b>da</b> (3-0, 4-0), khâu mạch — lực bền, ít phản ứng.",
+pts:["Đơn sợi trơn — phản ứng mô rất ít","Nút hay trượt → nút vuông + thêm nửa (4–5 nửa nút)","Cắt chỉ da theo lịch: mặt ~5 ngày, chi ~10–12 ngày"]},
+{id:"chromic",deck:2,name:"Chỉ chromic gut",en:"Chromic catgut · absorbable natural",
+use:"Chỉ tiêu dần <b>tự nhiên</b>: khâu mô muốn tiêu nhanh (niêm mạc, âm đạo) — nay ít dùng hơn chỉ tổng hợp.",
+pts:["Làm từ màng ruột bò (đơn sợi tự nhiên)","Xử lý chrom làm chậm tiêu: giữ lực ~2–3 tuần (plain gut chỉ ~1 tuần)","Phản ứng mô nhiều hơn chỉ tổng hợp — nhiều nơi đã thay bằng Vicryl/Monocryl"]},
+{id:"monocryl",deck:2,name:"Chỉ Monocryl",en:"Poliglecaprone 25 · absorbable monofilament",
+use:"Chỉ tiêu dần <b>nhanh</b>: khâu <b>dưới bì</b>, mũi liên tục dưới da — vết mổ thẩm mỹ.",
+pts:["Giữ lực ~1 tuần — đủ cho lớp dưới bì; tiêu hết ~3–4 tháng","Thường cỡ 4-0 / 5-0","Trơn hay trượt — cột nhiều nửa nút"]},
+{id:"monoVsMulti",deck:2,name:"Đơn sợi vs đa sợi",en:"Monofilament vs braided",
+use:"Chọn chỉ theo <b>nguy cơ nhiễm</b>: đơn sợi cho nơi nguy cơ cao (trơn, vi khuẩn không trú được); đa sợi cột chắc, dễ tay hơn.",
+pts:["Đơn sợi: xuyên êm, ít phản ứng — nhưng nút dễ trượt (cột thêm nửa)","Đa sợi: nút chắc, tay cột dễ — nhưng bện là ổ trú vi khuẩn","Đơn sợi: PDS, nylon, Monocryl · đa sợi: Vicryl, silk"]},
+{id:"sizes",deck:2,name:"Cỡ chỉ (USP)",en:"Suture size USP / EP",
+use:"Đọc cỡ chỉ: <b>số 0 càng nhiều, chỉ càng nhỏ</b> — 4-0 mảnh hơn 3-0, 3-0 mảnh hơn 2-0.",
+pts:["Da thường nylon 3-0 / 4-0","Mạc thành bụng: PDS 0 hoặc 1","Mạch: 5-0 đến 8-0 (vi mổ)","Quy đổi EP: số metric ≈ đường kính ×0,1 mm (3-0 ≈ 0,2 mm)"]},
+{id:"roundneedle",deck:2,name:"Kim tròn",en:"Round / taper-point needle",
+use:"Khâu <b>mô mềm</b>: cơ, ruột, dạ dày, mạch, mạc, phúc mạc.",
+pts:["Tiết diện tròn — không cắt, chỉ <b>tách đẩy</b> sợi mô sang hai bên → lỗ khâu khít","Đi qua mô êm, tổn thương ít","Quy tắc: trừ da / gân, mặc định kim tròn"]},
+{id:"cuttingneedle",deck:2,name:"Kim tam giác",en:"Cutting needle",
+use:"Khâu <b>mô chắc</b>: da, gân, mô xơ.",
+pts:["Tiết diện tam giác có cạnh sắc — cắt xuyên được mô dày đặc","Kim cắt ngược (reverse cutting): cạnh sắc phía lồi ngoài — mép ít rách, hay dùng thẩm mỹ","Khâu da thường: kim tam giác 3/8 vòng"]},
+{id:"curvature",deck:2,name:"Độ cong kim",en:"Needle curvature: 3/8 vs 1/2 circle",
+use:"<b>3/8 vòng (135°)</b>: khâu da, mô nông — xoay cổ tay một nhịp là qua. <b>½ vòng (180°)</b>: khoang sâu và hẹp — khâu mạch, khâu sâu trong ổ bụng.",
+pts:["Kim càng cong càng vào được chỗ hẹp — nhưng phải xoay nhiều hơn","3/8 là loại thường gặp nhất trên mâm mổ","Kim cong chỉ dùng với kìm cầm kim"]},
+{id:"swaged",deck:2,name:"Kim gắn chỉ",en:"Swaged / atraumatic needle",
+use:"Chỉ <b>gắn sẵn</b> vào đuôi kim (thân kim rỗng ép lại) — lỗ kim ≈ đường kính chỉ, vết kim nhỏ nhất.",
+pts:["Gọi là «atramatic» vì tổn thương tối thiểu","Kim xỏ chỉ truyền thống: lỗ kim to hơn chỉ → tổn thương nhiều hơn","Đếm kim cùng gạc trước đóng vết mổ"]},
+
+/* ---------- BỘ 3: NÚT & MŨI KHÂU ---------- */
+{id:"instrumenttie",deck:3,name:"Đỡ nút bằng kìm",en:"Instrument tie",
+use:"Cột nút bằng <b>kìm cầm kim</b>: tiết kiệm chỉ, đầu chỉ ngắn vẫn cột được, tay không chạm chỉ.",
+pts:["Kìm đè một đầu chỉ, tay kia quấn vòng qua mỏm kìm, rút siết","Dùng khi chỉ ngắn, chỗ sâu, hoặc cần vô khuẩn tối đa","Chậm hơn cột tay nhưng chắc và chuẩn từng nửa nút"]},
+{id:"onehand",deck:3,name:"Cột nút 1 tay",en:"One-handed tie",
+use:"Cột <b>nhanh</b> chuỗi nút — buộc nhiều mạch nhỏ liên tiếp: một tay tạo nửa nút, tay kia giữ chéo chỉ.",
+pts:["Nhanh nhất khi phải buộc nhiều nút liên tiếp","Luân phiên chiều nửa nút để ra nút vuông","Cần luyện thuần — mới học nên tập 2 tay trước"]},
+{id:"twohand",deck:3,name:"Cột nút 2 tay",en:"Two-handed tie",
+use:"Nút <b>chắc và kiểm soát tốt nhất</b> — buộc mạch lớn, cuống quan trọng.",
+pts:["Mỗi nửa nút vuốt phẳng từng bước, thấy rõ nút hình thành","Chậm hơn 1 tay","Người mới học kiểu này trước"]},
+{id:"squareknot",deck:3,name:"Nút vuông",en:"Square knot",
+use:"Nút chuẩn: 2 nửa nút <b>ngược chiều nhau</b>, lực kéo đều → nút nằm phẳng, không tuột.",
+pts:["Nửa 1: phải trên trái · nửa 2: trái trên phải","Kéo 2 đầu theo phương song song mép vết thương — nút phẳng mới chắc","Nút bà (granny): 2 nửa cùng chiều — dễ tuột, tránh"]},
+{id:"surgeonknot",deck:3,name:"Nút phẫu thuật",en:"Surgeon's knot",
+use:"Nửa nút đầu <b>quay 2 vòng</b> — giữ được lực căng khi cột nửa thứ hai. Dùng mô căng, chỉ trơn.",
+pts:["Vòng đầu kép khỏi xẹp khi kéo nửa 2","Kết thúc vẫn phải nửa ngược chiều để khóa vuông","Chỉ đơn sợi (nylon, Monocryl) gần như bắt buộc kiểu này"]},
+{id:"slackknot",deck:3,name:"Nút vắt (trượt → khóa)",en:"Slip knot converted to square",
+use:"Cột chỗ <b>sâu</b> khó với tay: nửa nút kéo lệch một chiều thành nút trượt — siết dễ xuống sâu, rồi <b>kéo ngược chiều</b> để khóa phẳng thành nút vuông.",
+pts:["Quên bước «khóa» → nút trượt = tuột sau mổ","Cảm giác: siết xuống sâu xong, giật ngược một đầu cho nút lật phẳng","Kết hợp kìm cầm kim với chỗ tay khó với tới"]},
+{id:"interrupted",deck:3,name:"Mũi rời",en:"Simple interrupted suture",
+use:"Mũi khâu đơn lẻ, <b>mỗi mũi cột nút riêng</b> — mũi khâu da chuẩn.",
+pts:["Một mũi hỏng / đứt không ảnh hưởng mũi khác","Dễ điều chỉnh khoảng cách và đối mép","Chậm hơn mũi liên tục","Vào kim cách mép vài mm, các mũi cách đều nhau"]},
+{id:"running",deck:3,name:"Mũi liên tục",en:"Simple continuous / running suture",
+use:"Một chỉ <b>chạy suốt</b> vết thương, cột 2 đầu — khâu nhanh: phúc mạc, mạc, da vết sạch.",
+pts:["Nhanh, phân bố lực căng đều","Đứt một chỗ → toàn bộ đường khâu lỏng","Cuối khóa bằng nút vuông / nút phẫu thuật với chính đuôi chỉ"]},
+{id:"locking",deck:3,name:"Mũi vắt liên tục",en:"Continuous locking (blanket) suture",
+use:"Mũi liên tục mà <b>mỗi mũi vắt qua chỉ cũ</b> → mép khít hơn, cầm máu tốt hơn mũi liên tục thường.",
+pts:["Dùng nơi mép dễ chảy máu: da đầu, mô xốp","Siết đều — vắt quá chật sẽ thắt nghẹn mép da","Tốn chỉ hơn mũi liên tục thường"]},
+{id:"hmattress",deck:3,name:"Mattress ngang",en:"Horizontal mattress suture",
+use:"Hai lượt xuyên <b>song song liền khối</b> — phân tán lực căng ra hai bên, dùng vết thương <b>căng rộng</b>.",
+pts:["Hình dung: «2 mũi rời nối với nhau»","Lực đè đều nên mép ít bị xé","Chừa nhiều vết kim hơn mũi rời"]},
+{id:"vmattress",deck:3,name:"Mattress dọc",en:"Vertical mattress (far-near-near-far)",
+use:"<b>Lật mép da tốt nhất</b> (eversion) cho da dày, căng: lưng, da đầu, chi — quy tắc «xa–gần–gần–xa».",
+pts:["Xuyên rộng — sâu 2 mép trước (far), rồi nông gần mép (near)","Mép dựng đứng, khít nhau — ít chìm sẹo","Vết kim to hơn mũi rời"]},
+{id:"subcuticular",deck:3,name:"Khâu dưới bì",en:"Subcuticular continuous suture",
+use:"Chỉ chạy <b>trong lớp bì</b>, không lộ chỉ ngoài da → sẹo mảnh, đẹp. Chỉ tiêu (Monocryl / Vicryl Rapid 4-0, 5-0).",
+pts:["Không phải cắt chỉ sau này (chỉ tiêu)","Hai đầu chỉ ra ngoài da rồi cắt sát / dán băng","Dùng vết mổ sạch, không căng"]},
+
+/* ---------- BỘ 4: VÔ TRÙNG & PHÒNG MỔ ---------- */
+{id:"handwash",deck:4,name:"Rửa tay mổ 7 bước",en:"Surgical hand scrub / rub",
+use:"Diệt khuẩn hai tay trước mổ bằng hóa chất sát khuẩn (chlorhexidine 4% hoặc povidone-iodine), đủ thời gian theo chế phẩm (~2–6 phút).",
+pts:["Thứ tự: lòng bàn tay → mu tay → kẽ ngón → khớp ngón → ngón cái → đầu ngón &amp; móng → cổ tay lên cẳng tay","Ca đầu ngày: cọ móng bằng bàn chải vô khuẩn (một lần trong ngày)","Suốt quá trình tay giữ <b>trên khuỷu</b> — nước chảy từ sạch xuống bẩn","Không chạm vòi / bồn / khóa nước bằng tay đã rửa"]},
+{id:"drygown",deck:4,name:"Sau rửa: lau & mặc áo",en:"Drying & gowning",
+use:"Lau tay bằng <b>khăn vô khuẩn riêng cho mỗi tay</b> (từ ngón lên khuỷu), rồi mặc áo mổ với sự trợ giúp của điều dưỡng vô khuẩn.",
+pts:["Mặc xong mới đeo găng <b>kín</b> (closed gloving)","Mọi mặt ngoài áo & găng là vô khuẩn — chỉ được chạm bằng đồ vô khuẩn khác","Áo ướt = mất rào cản → phải đổi"]},
+{id:"gloving",deck:4,name:"Đeo găng kín",en:"Closed gloving technique",
+use:"Đeo găng mà <b>bàn tay không lòi ra khỏi tay áo</b> → không bao giờ chạm mặt ngoài găng.",
+pts:["Găng trải lên bàn tay còn nằm trong ống tay áo, ngón đâm thẳng vào","Găng chạm da trần hoặc rách giữa mổ → báo ngay và đeo găng mới","Đeo xong hai tay đan kín chờ mổ — không hạ tay dưới eo"]},
+{id:"draping",deck:4,name:"Trải dressing",en:"Draping",
+use:"Phủ khăn / dressing vô khuẩn quanh vùng mổ, <b>chỉ hở đúng chỗ rạch da</b>.",
+pts:["Trải quanh vùng mổ, không với tay qua vùng chưa sạch","Tay chỉ nắm mép khăn phía mình","Khăn ướt thấm qua = nhiễm → thêm lớp mới","Vùng hở để đủ nhỏ nhất cho phẫu thuật"]},
+{id:"positions",deck:4,name:"Vị trí đứng trong mổ",en:"OR positions (mổ 1, phụ, điều dưỡng)",
+use:"<b>Mổ 1</b> đứng nơi thuận thao tác; <b>phụ 1</b> đối diện — trợ tay, hút, giữ retractor; <b>phụ 2</b> đứng đầu hoặc bên giữ lá; <b>điều dưỡng mổ</b> đứng gần bàn dụng cụ.",
+pts:["Khu vực đầu bàn = bác sĩ gây mê + máy móc","Không quay lưng lại bàn vô khuẩn; đi vòng ngoài khi di chuyển","Người mới thường đứng phụ 2 — việc chính: giữ retractor, hút, cắt chỉ"]},
+{id:"passing",deck:4,name:"Xin & truyền dụng cụ",en:"Instrument request & handoff",
+use:"Điều dưỡng mổ chuẩn bị và <b>truyền dụng cụ khi được gọi tên</b>: «Kim», «Kelly», «Metz» — đặt chắc vào lòng bàn tay.",
+pts:["Không ném, không chuyền tay qua trên vết mổ","Bác sĩ xin rõ tên + cỡ: «chỉ vicryl 3-0», «lưỡi 15»","Vật sắc nhọn: truyền chậm, báo rõ «dao», «kim»","Dụng cụ dùng xong về đúng khay, không để lên người bệnh nhân"]},
+{id:"counts",deck:4,name:"Đếm gạc — kim — dụng cụ",en:"Surgical counts",
+use:"Đếm gạc, kim, dụng cụ: đầu mổ, khi thêm đồ, và <b>trước khi đóng</b> (đặc biệt trước đóng bụng) — điều dưỡng vô khuẩn + điều dưỡng ngoài cùng đếm to, đối chiếu.",
+pts:["Số không khớp → <b>không đóng vết mổ</b>: rà vùng mổ, chụp X-quang nếu cần","Gạc mổ phải có dải cản quang (radiopaque)","Đếm lại lần cuối trước đóng da"]},
+{id:"sterilefield",deck:4,name:"Vùng vô khuẩn — quy tắc",en:"Sterile field rules",
+use:"Tay vô khuẩn giữ <b>trên eo, trong tầm nhìn</b>; không quay lưng lại vùng vô khuẩn; không đi giữa hai người / hai bàn vô khuẩn; đồ rơi khỏi bàn = coi như nhiễm.",
+pts:["Của áo mổ: mặt trước thân (ngực → eo) và ống tay áo là vô khuẩn — lưng, vai, cổ, dưới eo KHÔNG","Chỉ người đã rửa tay, mặc áo, đeo găng mới được chạm vùng vô khuẩn","Nghi ngờ nhiễm → thay (áo, găng, khăn) — không «ước chắc»"]},
+{id:"nameband",deck:4,name:"Biển danh & Sign In",en:"ID band & Sign In (trước gây mê)",
+use:"Kiểm tra trước gây mê: <b>biển danh đúng bệnh nhân</b> (họ tên, ngày sinh), đúng chỗ mổ, đã ký đồng thuận, dạ dày đói, dị ứng, máy móc sẵn sàng.",
+pts:["Biển danh đeo suốt thời gian nằm viện","Chỗ mổ có 2 bên đối xứng (chi, mắt...) phải <b>đánh dấu trước</b>","Sign In do bác sĩ gây mê khởi xướng cùng điều dưỡng"]},
+{id:"timeout",deck:4,name:"Time Out (trước rạch da)",en:"WHO Surgical Safety Checklist · Time Out",
+use:"Cả kíp <b>dừng lại trước rạch da</b>, xác nhận to: đúng bệnh nhân, đúng vị trí & cách mổ, kháng sinh dự phòng đã chạy, phim chiếu sẵn.",
+pts:["Checklist WHO 3 pha: Sign In (trước gây mê) → Time Out (trước rạch da) → Sign Out (trước ra phòng mổ)","Nhiều bệnh viện VN đã triển khai — khi vào mổ sẽ gặp","Mục đích: chặn sai bệnh nhân, sai chỗ, sai phương pháp"]},
+{id:"signout",deck:4,name:"Sign Out (trước ra phòng mổ)",en:"Sign Out (before leaving OR)",
+use:"Trước đưa bệnh nhân ra: xác nhận <b>tên phẫu thuật đã ghi</b> hồ sơ, đếm gạc — kim — dụng cụ khớp, <b>dán nhãn mẫu bệnh phẩm</b> (đọc to tên BN + mẫu), ghi sự cố thiết bị.",
+pts:["Mẫu bệnh phẩm: đọc to tên bệnh nhân + tên mẫu ngay khi dán nhãn","Hồ sơ ghi đúng tên phẫu thuật đã làm","Ghi lại mọi trục trặc thiết bị để khắc phục"]},
+];
+
+/* ================= SVG — TỰ VẼ ================= */
+const SW=(inner,h)=>'<svg viewBox="0 0 320 '+(h||100)+'" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">'+inner+'</g></svg>';
+const L=(a,b,c,d,w,st)=>'<line x1="'+a+'" y1="'+b+'" x2="'+c+'" y2="'+d+'" '+(w?'stroke-width="'+w+'" ':'')+(st||'')+'/>';
+const P=(d,w,extra)=>'<path d="'+d+'" '+(w?'stroke-width="'+w+'" ':'')+(extra||'')+'/>';
+const C=(x,y,r,fill)=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" '+(fill?'fill="currentColor" stroke="none"':'')+'/>';
+const E=(x,y,rx,ry)=>'<ellipse cx="'+x+'" cy="'+y+'" rx="'+rx+'" ry="'+ry+'"/>';
+const R=(x,y,w,h,rx)=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(rx||3)+'"/>';
+const T=(x,y,t,s)=>'<text x="'+x+'" y="'+y+'" font-size="'+(s||11)+'" fill="currentColor" stroke="none" text-anchor="middle" font-family="inherit" font-weight="600">'+t+'</text>';
+const ACC='stroke="var(--blue)"';
+const DASH='stroke-dasharray="5 5"';
+
+/* — họ kẹp mạch (Kelly/Kocher/Mosquito) — */
+function gClamp(kind){
+  let s='';
+  if(kind==='mosquito'){
+    s+=L(16,43.5,132,39)+L(16,46.5,132,51)+P('M132,36 h14 v18 h-14 z',3);
+    s+=L(146,39,232,26)+L(146,51,232,64)+E(254,23,18,10)+E(254,67,18,10);
+    s+='<g '+ACC+' stroke-width="2">'+L(196,43,220,43)+L(196,49,220,49)+L(201,41,201,51)+L(210,41,210,51)+'</g>';
+    s+='<g stroke-width="1.1" opacity=".8">'+L(30,42,30,48)+L(42,42,42,48)+L(54,42,54,48)+L(66,42,66,48)+L(78,42,78,48)+L(90,42,90,48)+L(102,42,102,48)+L(114,42,114,48)+'</g>';
+  } else {
+    s+=L(16,43,150,37)+L(16,47,150,53)+P('M150,33 h16 v24 h-16 z',3);
+    s+=L(166,37,236,25)+L(166,53,236,65)+E(262,23,23,12)+E(262,67,23,12);
+    s+='<g '+ACC+' stroke-width="2">'+L(190,44,224,44)+L(190,48,224,48)+L(197,42,197,50)+L(206,42,206,50)+L(215,42,215,50)+'</g>';
+    s+='<g stroke-width="1.3" opacity=".8">'+L(34,40,34,50)+L(47,40,47,50)+L(60,40,60,50)+L(73,40,73,50)+L(86,40,86,50)+L(99,40,99,50)+L(112,40,112,50)+L(125,40,125,50)+L(138,40,138,50)+'</g>';
+  }
+  if(kind==='kocher'){ s+='<path d="M20,41 L11,45 L20,49 Z" fill="currentColor" stroke="none"/>'; }
+  return SW(s);
+}
+function gBabcock(){
+  let s=P('M16,44 C40,33 80,33 108,41 L150,37')+P('M16,46 C40,57 80,57 108,49 L150,53');
+  s+=P('M150,33 h16 v24 h-16 z',3)+L(166,37,236,25)+L(166,53,236,65)+E(262,23,23,12)+E(262,67,23,12);
+  s+='<g '+ACC+' stroke-width="2">'+L(190,44,224,44)+L(190,48,224,48)+L(200,42,200,50)+L(210,42,210,50)+'</g>';
+  s+=P('M16,42 q-7,3 0,6',2)+P('M16,48 q-7,-3 0,-6',2);
+  return SW(s);
+}
+function gAllis(){
+  let s=L(16,43,150,37)+L(16,47,150,53)+P('M150,33 h16 v24 h-16 z',3);
+  s+=L(166,37,236,25)+L(166,53,236,65)+E(262,23,23,12)+E(262,67,23,12);
+  s+='<g '+ACC+' stroke-width="2">'+L(190,44,224,44)+L(190,48,224,48)+L(200,42,200,50)+L(210,42,210,50)+'</g>';
+  for(let i=0;i<4;i++){ const x=38+i*26;
+    s+='<path d="M'+x+',42 l7,3 l-7,3 Z" fill="currentColor" stroke="none"/>';
+    s+='<path d="M'+(x+13)+',48 l7,-3 l-7,-3 Z" fill="currentColor" stroke="none"/>';
+  }
+  return SW(s);
+}
+function gNeedleHolder(olsen){
+  let s=L(16,43,88,41,3.5)+L(16,47,88,49,3.5)+P('M88,36 h14 v18 h-14 z',3);
+  s+=L(102,41,240,26,3.5)+L(102,49,240,64,3.5)+E(262,23,20,11)+E(262,67,20,11);
+  s+='<g '+ACC+' stroke-width="2">'+L(150,44,182,44)+L(150,48,182,48)+L(157,42,157,50)+L(166,42,166,50)+L(175,42,175,50)+'</g>';
+  s+='<g fill="currentColor" stroke="none">'+C(34,45,1.5,true)+C(44,45,1.5,true)+C(54,45,1.5,true)+C(64,45,1.5,true)+'</g>';
+  if(olsen){
+    s+='<g stroke-width="2.4">'+L(148,90,190,84)+L(148,84,190,90)+'</g>'+C(193,87,2,true);
+    s+=T(246,91,'= kéo cắt chỉ',10);
+  }
+  return SW(s,olsen?100:90);
+}
+function gDoyen(){
+  let s=P('M14,42 C60,36 120,34 176,38 L196,40',3)+P('M14,48 C60,54 120,56 176,52 L196,50',3);
+  s+='<ellipse cx="90" cy="45" rx="4" ry="9" stroke-width="2"/>';
+  s+=P('M196,36 h12 v18 h-12 z',3)+L(208,40,250,28,3)+L(208,50,250,62,3);
+  s+=E(264,26,15,9)+E(264,64,15,9);
+  s+=T(120,80,'băng đàn hồi ép nhẹ — không bóp nát ruột',11);
+  return SW(s,100);
+}
+function gScissors(kind){
+  let s='';
+  if(kind==='mayo'){
+    s+=L(26,41,150,42,5)+L(26,55,150,48,5)+P('M26,41 q-7,7 0,14',4);
+    s+=C(150,45,5)+L(150,42,222,24,4)+L(150,48,222,66,4)+E(248,22,20,11)+E(248,68,20,11);
+  } else {
+    s+=P('M30,40 C80,32 120,36 150,42',3)+P('M40,52 C90,58 125,54 150,48',3);
+    s+=C(150,45,4.5)+L(150,42,222,24,3)+L(150,48,222,66,3)+E(246,22,19,10)+E(246,68,19,10);
+  }
+  return SW(s);
+}
+function gPincer(teeth){
+  let s=P('M16,44 C120,40 220,36 302,32',teeth?4:3)+P('M16,46 C120,50 220,54 302,58',teeth?4:3);
+  s+=C(150,44.7,2, true);
+  s+='<g stroke-width="1.4" opacity=".8">'+L(240,32,240,26)+L(252,31,252,25)+L(264,30,264,24)+L(276,29,276,23)+'</g>';
+  if(teeth){ s+='<path d="M17,42.5 L24,45 L17,47.5 Z" fill="currentColor" stroke="none"/>'; }
+  return SW(s);
+}
+function gScalpel(big){
+  let s=P('M22,62 L100,54 H292 V66 H100 Z',3)+L(120,60,270,60,1.4);
+  if(!big){
+    s+=P('M24,22 C42,17 55,23 57,35 C46,41 32,39 24,34 Z',3)+T(40,50,'№10',11);
+    s+=P('M84,14 L106,38 L86,40 Z',3)+T(95,52,'№11',11);
+    s+=P('M140,25 C150,19 161,23 163,33 C154,39 144,35 140,30 Z',3)+T(151,50,'№15',11);
+  } else {
+    s+=P('M20,16 C46,10 66,20 69,38 C54,47 34,43 20,36 Z',3)+T(45,54,'№20',11);
+    s+=P('M108,20 C130,15 148,24 150,38 C137,46 119,42 108,36 Z',3)+T(129,54,'№22',11);
+  }
+  return SW(s);
+}
+function gLangenbeck(){
+  let s=R(26,30,150,12,4);
+  s+=P('M176,32 C232,36 250,62 232,86',5)+P('M176,44 C224,48 238,64 226,82',2.5);
+  return SW(s);
+}
+function gDeaver(){
+  let s=R(26,14,120,11,4);
+  s+=P('M146,14 C242,22 260,58 198,86 C189,90 183,86 185,79 C234,64 226,36 144,26 Z',3);
+  s+=P('M150,27 C226,38 240,60 198,78',1.8);
+  return SW(s);
+}
+function gBalfour(){
+  let s=P('M28,26 H292',6)+L(60,26,60,88,5)+L(250,26,250,88,5);
+  s+='<g stroke-width="2">'+C(60,26,7)+L(54,26,66,26)+L(60,20,60,32)+C(155,26,7)+L(149,26,161,26)+L(155,20,155,32)+C(250,26,7)+L(244,26,256,26)+L(250,20,250,32)+'</g>';
+  s+=L(155,33,155,86,5)+L(147,86,163,86,5);
+  s+=L(60,88,88,88,5)+L(222,88,250,88,5);
+  return SW(s);
+}
+function gYankauer(){
+  let s=L(24,42,220,38,5)+P('M220,38 C258,36 280,26 288,14',5);
+  s+=P('M24,42 C15,44 13,51 20,55 C31,60 46,55 62,50',4)+C(31,48,2.5,true);
+  s+='<g stroke-width="2">'+L(60,45,60,55)+L(80,46,80,55)+L(100,46,100,55)+'</g>';
+  return SW(s);
+}
+/* — chỉ & kim — */
+function gThread(braided,label){
+  let s='M30,62 C70,20 122,20 152,56 C182,92 242,92 282,50 C292,38 282,26 270,33';
+  let out=P(s,3);
+  if(braided){
+    out+='<g stroke-width="1.6" opacity=".85">';
+    for(let x=44;x<=272;x+=12){ out+=L(x,30,x+7,44,1.6)+L(x,44,x+7,30,1.6); }
+    out+='</g>';
+  }
+  out+=R(18,74,120,20,5)+T(78,88,label,12);
+  return SW(out,100);
+}
+function gMonoVsMulti(){
+  let out='<g stroke-width="2.4">'+L(30,30,290,30);
+  for(let x=44;x<286;x+=16){ out+=L(x,22,x+9,38,2)+L(x,38,x+9,22,2); }
+  out+='</g>'+T(160,16,'đa sợi (bện)',12);
+  out+='<g stroke-width="3">'+L(30,70,290,70)+'</g>'+T(160,92,'đơn sợi (trơn)',12);
+  return SW(out,100);
+}
+function gSizes(){
+  let out='';
+  const cols=[[46,8,'0'],[102,6,'2-0'],[158,4.4,'3-0'],[214,3,'4-0'],[270,2,'5-0']];
+  for(const c of cols){ out+=L(c[0],22,c[0],74,c[1])+T(c[0],90,c[2],12); }
+  out+='<g '+ACC+'>'+L(30,14,290,14,2)+'</g>'+T(160,8,'nhỏ ←  → to',10);
+  return SW(out,100);
+}
+function gNeedleArc(frac,cross){
+  const cx=92,cy=86,r=66;
+  const rad=t=>t*Math.PI/180;
+  const pt=t=>[cx+r*Math.sin(rad(t)),cy-r*Math.cos(rad(t))];
+  const a2=frac*360;
+  const [ex,ey]=pt(a2);
+  const large=frac>0.5?1:0;
+  let s='<path d="M'+cx+','+(cy-r)+' A'+r+','+r+' 0 '+large+' 1 '+ex+','+ey+'" stroke-width="4"/>';
+  s+=L(ex,ey,ex+9,ey-7,2.5); /* đuôi kim */
+  s+='<g stroke-width="3">';
+  if(cross==='round'){ s+=C(252,52,10); }
+  else { s+=P('M252,40 L265,62 L239,62 Z'); }
+  s+='</g>';
+  s+=T(252,116,cross==='round'?'tiết diện TRÒN':'tiết diện TAM GIÁC',11);
+  s+=T(252,20,(frac===0.375?'3/8 vòng · 135°':'½ vòng · 180°'),12);
+  return SW(s,160);
+}
+function gSwaged(){
+  let s=P('M60,26 A54,54 0 0 1 114,80',4)+L(114,80,122,72,2.5);
+  s+=P('M122,72 q22,-9 44,0 t44,0 t40,0',2.2);
+  s+=R(210,18,96,44,6);
+  s+=L(218,30,298,30,1.5)+L(218,40,298,40,1.5)+L(218,50,298,50,1.5);
+  s+=T(258,30,'chỉ',10)+T(258,40,'gắn sẵn',10)+T(258,50,'= atramatic',10);
+  s+=T(90,16,'kim',12);
+  return SW(s,100);
+}
+/* — nút & mũi khâu (mặt cắt da: 2 khối, khe giữa = vết thương) — */
+function skin(){ return R(18,38,128,28)+R(174,38,128,28)+L(146,34,146,70,1.5)+L(174,34,174,70,1.5); }
+function gInterrupted(){
+  let s=skin();
+  for(const x of [86,240]){
+    s+='<g '+ACC+'>'+L(x,26,x,74,2.6)+'</g>'+C(x,24,3.5,true);
+  }
+  s+=T(160,16,'mỗi mũi cột nút riêng',11);
+  return SW(s,90);
+}
+function gRunning(lock){
+  let s=skin();
+  let d='M34,32 '; let xs=[];
+  for(let x=34;x<=286;x+=36){ const top=(x-34)/36%2===0; d+='L'+x+','+(top?32:68)+' '; if(!top)xs.push(x); }
+  s+='<g '+ACC+'>'+P(d,2.6)+'</g>'+C(286,30,3.5,true);
+  if(lock){ s+='<g '+ACC+' stroke-width="3">'; for(const x of xs){ s+=L(x-10,68,x+10,68,3); } s+='</g>'; }
+  s+=T(160,16,lock?'mỗi vòng VẮT qua chỉ cũ':'một chỉ chạy suốt, cột 2 đầu',11);
+  return SW(s,90);
+}
+function gMattress(vert){
+  let s=skin();
+  if(vert){
+    s+='<g '+ACC+'>'+P('M70,60 Q160,78 250,60',2.6)+P('M120,36 Q160,46 200,36',2.6)+L(70,60,120,36,2.6)+L(250,60,200,36,2.6)+'</g>'+C(200,33,3.5,true);
+    s+=T(160,16,'xa — gần — gần — xa',11);
+  } else {
+    s+='<g '+ACC+'>'+P('M100,38 Q160,26 220,38',2.6)+P('M220,56 Q160,68 100,56',2.6)+L(220,38,220,56,2.6)+'</g>'+C(100,36,3.5,true);
+    s+=T(160,16,'2 mũi rời nối liền khối, song song',11);
+  }
+  return SW(s,90);
+}
+function gSubcuticular(){
+  let s=R(18,38,138,28)+R(164,38,138,28);
+  s+='<g '+ACC+' stroke-width="2.2" stroke-dasharray="7 5">';
+  s+=P('M30,50 Q45,40 60,50 T105,50 T150,50 T195,50 T240,50 T285,50');
+  s+='</g>';
+  s+=C(30,52,3,true)+C(285,52,3,true);
+  s+=L(18,34,18,70,1.5)+L(302,34,302,70,1.5);
+  s+=T(160,20,'chỉ chạy TRONG lớp bì — không lộ ra da',11);
+  return SW(s,90);
+}
+function gKnot(kind){
+  let s='';
+  const weave=(ox,oy)=>'<g stroke-width="3">'+L(30+ox,36+oy,96+ox,52+oy)+L(30+ox,52+oy,96+ox,36+oy)+L(96+ox,36+oy,150+ox,44+oy)+L(96+ox,52+oy,150+ox,44+oy)+'</g>';
+  if(kind==='square'){ s+=weave(0,0)+T(90,20,'nửa 1 ngược nửa 2 → phẳng',11); }
+  if(kind==='surgeon'){ s+='<g stroke-width="3">'+E(46,44,10,14)+L(56,38,122,54)+L(56,54,122,38)+'</g>'+T(96,20,'vòng đầu QUAY KÉP → không xẹp',10.5); }
+  if(kind==='slack'){
+    s+='<g stroke-width="2.6">'+L(24,34,86,50)+L(24,50,86,34)+L(86,34,128,42)+L(86,50,128,42)+'</g>';
+    s+='<g '+ACC+' stroke-width="2.4">'+L(136,42,170,42)+P('M170,42 l-9,-5 v10 z',1.5,'fill="var(--blue)"')+'</g>';
+    s+=T(80,20,'① trượt siết xuống sâu',10.5);
+    s+='<g stroke-width="2.6">'+L(196,34,258,50)+L(196,50,258,34)+L(258,34,300,42)+L(258,50,300,42)+'</g>';
+    s+='<g '+ACC+' stroke-width="2.4">'+L(190,68,230,68)+P('M230,68 l-9,-5 v10 z',1.5,'fill="var(--blue)"')+'</g>';
+    s+=T(240,20,'② kéo NGƯỢC chiều → khóa vuông',10.5);
+  }
+  if(kind==='onehand'){
+    s+='<g stroke-width="2.6">'+L(30,42,110,42)+L(30,58,110,58)+L(110,42,150,50)+L(110,58,150,50)+'</g>';
+    s+=R(150,34,58,32,10)+L(162,34,162,24,2.4)+L(174,34,174,22,2.4)+L(186,34,186,24,2.4)+L(198,34,198,26,2.4);
+    s+=T(90,20,'một tay tạo nửa nút — tay kia giữ chỉ',10.5);
+  }
+  if(kind==='twohand'){
+    s+=weave(60,-4)+L(76,44,90,44,2.4)+L(210,40,244,44,2.4);
+    s+=T(150,20,'hai tay — vuốt phẳng từng nửa nút',10.5);
+  }
+  if(kind==='instrument'){
+    s+='<g transform="translate(4,28) scale(0.36)">'+gClamp('kelly').replace(/^<svg[^>]*>|<\/svg>$/g,'')+'</g>';
+    s+='<g stroke-width="2.6">'+L(130,48,300,48)+L(130,62,300,62)+L(130,48,130,62)+'</g>';
+    s+='<g stroke-width="2.2">'+L(158,40,172,70)+L(158,70,172,40)+L(180,40,194,70)+L(180,70,194,40)+'</g>';
+    s+=T(150,16,'kìm đè đầu chỉ — tay quấn vòng & siết',10.5);
+  }
+  return SW(s,kind==='instrument'?100:80);
+}
+/* — vô trùng & phòng mổ — */
+function gHandwash(){
+  let s=L(140,16,140,40,5)+P('M140,40 q0,14 16,14 h14',5);
+  s+=L(120,16,180,16,5);
+  s+='<g fill="currentColor" stroke="none">'+C(196,66,3,true)+C(206,76,2.4,true)+C(190,82,2,true)+'</g>';
+  s+=C(252,48,22)+T(252,56,'7',26);
+  s+=T(110,86,'tay giữ TRÊN khuỷu',11);
+  return SW(s,100);
+}
+function gGown(){
+  let s=P('M104,26 C112,18 148,18 156,26 L182,38 L172,50 L156,42 L156,86 L104,86 L104,42 L88,50 L78,38 Z',3);
+  s+='<g '+ACC+' stroke-width="2">'+L(118,62,142,62)+L(118,68,142,68)+'</g>';
+  s+=R(206,46,84,16,6)+L(214,54,282,54,1.4);
+  s+=T(248,36,'khăn lau — mỗi tay 1 cái',10.5);
+  s+=T(130,100,'mặc xong → đeo găng KÍN',11);
+  return SW(s,110);
+}
+function gGloving(){
+  let s=R(84,50,52,18,6)+L(92,50,92,68,1.6)+L(112,50,112,68,1.6);
+  s+=P('M158,30 c11,0 17,9 17,19 v20 c0,9 -6,13 -13,13 h-16 c-9,0 -13,-6 -13,-13 v-20 c0,-10 6,-19 12,-19 z',3);
+  s+=P('M150,56 c-10,0 -15,7 -12,14',3);
+  s+='<g '+ACC+' stroke-width="2.2">'+L(142,59,158,59)+P('M158,59 l-8,-4 v8 z',1,'fill="var(--blue)"')+'</g>';
+  s+=T(110,30,'tay áo',11)+T(160,10,'bàn tay không lòi khỏi ống tay áo',10.5);
+  return SW(s,100);
+}
+function gDraping(){
+  let s='<g stroke-dasharray="4 4" opacity=".6">'+E(160,64,120,22)+'</g>';
+  s+=R(40,20,240,66,6);
+  s+='<g '+ACC+'>'+R(138,44,44,18,4)+'</g>';
+  s+=T(160,14,'chỉ hở đúng chỗ rạch da',11);
+  s+=T(160,102,'= bệnh nhân (nhìn từ trên)',10);
+  return SW(s,110);
+}
+function gPositions(){
+  let s=R(70,34,180,36,8);
+  s+=C(50,52,9)+T(50,30,'gây mê',10);
+  s+=C(120,22,7)+T(120,12,'Mổ 1',10.5);
+  s+=C(120,82,7)+T(120,98,'Phụ 1',10.5);
+  s+=C(210,82,7)+T(210,98,'Phụ 2',10.5);
+  s+=C(230,22,7)+T(230,12,'ĐD mổ',10.5);
+  s+=T(160,55,'bàn mổ',10);
+  return SW(s,108);
+}
+function gPassing(){
+  let s=R(52,20,216,40,14)+P('M92,60 l-10,14 h20 z',2);
+  s+=T(160,45,'«Kim!» «Kelly!» «Cắt!»',14);
+  s+='<g transform="translate(84,58) scale(0.48)">'+gClamp('kelly').replace(/^<svg[^>]*>|<\/svg>$/g,'')+'</g>';
+  return SW(s,110);
+}
+function gCounts(){
+  let s=R(60,54,84,22)+R(80,46,84,22)+R(100,38,84,22);
+  s+='<g '+ACC+' stroke-width="2">'+L(66,65,138,59)+L(86,57,158,51)+L(106,49,178,43)+'</g>';
+  s+='<g stroke-width="3">'+L(238,40,238,66)+L(250,40,250,66)+L(262,40,262,66)+L(274,40,274,66)+L(230,62,284,42)+'</g>';
+  s+=T(160,20,'đếm to — đối chiếu 2 người',11);
+  return SW(s,90);
+}
+function gSterile(){
+  let s=C(160,20,11)+R(128,36,64,38,6);
+  s+='<g '+ACC+'>'+R(128,36,64,38,6)+'</g>';
+  s+=L(128,44,96,66)+L(192,44,224,66);
+  s+='<g stroke-width="2.4">'+L(136,26,148,38)+L(148,26,136,38)+L(172,26,184,38)+L(184,26,172,38)+L(148,84,172,96)+L(172,84,148,96)+'</g>';
+  s+=T(80,52,'vùng xanh =',10)+T(80,64,'vô khuẩn',10);
+  s+=T(240,52,'✕ = không',10)+T(240,64,'vô khuẩn',10);
+  return SW(s,110);
+}
+function gChecklist(){
+  let s=P('M50,50 H270',2);
+  s+=C(90,50,9)+T(90,30,'Sign In',11)+T(90,70,'trước gây mê',9.5);
+  s+='<g '+ACC+'>'+C(160,50,12)+'</g>'+T(160,28,'TIME OUT',12)+T(160,72,'trước rạch da',9.5);
+  s+=C(230,50,9)+T(230,30,'Sign Out',11)+T(230,70,'trước ra PM',9.5);
+  return SW(s,90);
+}
+function gNameband(){
+  let s=P('M120,34 q70,-16 140,0',3)+P('M120,58 q70,16 140,0',3);
+  s+=R(120,36,140,18,6);
+  s+=T(190,49,'BN · họ tên · NS',10);
+  s+='<g stroke-width="2">'+R(60,74,14,14,3)+P('M63,81 l3,3 l5,-6',1.8)+R(150,74,14,14,3)+P('M153,81 l3,3 l5,-6',1.8)+R(240,74,14,14,3)+P('M243,81 l3,3 l5,-6',1.8)+'</g>';
+  s+=T(80,68,'đúng BN',10)+T(170,68,'đúng chỗ',10)+T(262,68,'đồng thuận',10);
+  return SW(s,100);
+}
+
+/* gắn fig cho từng thẻ */
+const FIGS={
+  kelly:()=>gClamp('kelly'), kocher:()=>gClamp('kocher'), mosquito:()=>gClamp('mosquito'),
+  babcock:gBabcock, allis:gAllis, pincer:()=>gPincer(false), adson:()=>gPincer(true),
+  needleholder:()=>gNeedleHolder(false), olsen:()=>gNeedleHolder(true),
+  mayoscissors:()=>gScissors('mayo'), metz:()=>gScissors('metz'),
+  scalpel3:()=>gScalpel(false), scalpel4:()=>gScalpel(true),
+  langenbeck:gLangenbeck, deaver:gDeaver, balfour:gBalfour, doyen:gDoyen, yankauer:gYankauer,
+  vicryl:()=>gThread(true,'VICRYL · 3-0'), pds:()=>gThread(false,'PDS II · 0'),
+  silk:()=>gThread(true,'SILK · 2-0'), nylon:()=>gThread(false,'NYLON · 3-0'),
+  chromic:()=>gThread(false,'CHROMIC · 3-0'), monocryl:()=>gThread(false,'MONOCRYL · 4-0'),
+  monoVsMulti:gMonoVsMulti, sizes:gSizes,
+  roundneedle:()=>gNeedleArc(0.375,'round'), cuttingneedle:()=>gNeedleArc(0.375,'cutting'),
+  curvature:()=>gNeedleArc(0.5,'round'), swaged:gSwaged,
+  instrumenttie:()=>gKnot('instrument'), onehand:()=>gKnot('onehand'), twohand:()=>gKnot('twohand'),
+  squareknot:()=>gKnot('square'), surgeonknot:()=>gKnot('surgeon'), slackknot:()=>gKnot('slack'),
+  interrupted:gInterrupted, running:()=>gRunning(false), locking:()=>gRunning(true),
+  hmattress:()=>gMattress(false), vmattress:()=>gMattress(true), subcuticular:gSubcuticular,
+  handwash:gHandwash, drygown:gGown, gloving:gGloving, draping:gDraping,
+  positions:gPositions, passing:gPassing, counts:gCounts, sterilefield:gSterile,
+  nameband:gNameband, timeout:gChecklist, signout:gChecklist
+};
+
+/* ================= TRẠNG THÁI & LƯU TRỮ ================= */
+const KEY='fc_phauthuat_v1';
+const IVAL=[0,1,2,4,7,14]; /* ngày theo box 0..5 */
+const NEW_PER_DAY=10;
+const todayKey=()=>new Date().toISOString().slice(0,10);
+let S=load();
+function load(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(KEY)||'{}');
+    if(raw && raw.v===1) return raw;
+  }catch(e){}
+  return {v:1,cards:{},day:{key:todayKey(),newSeen:0,reviews:0},totalReviews:0,quizBest:null,dark:false};
+}
+function save(){ localStorage.setItem(KEY,JSON.stringify(S)); }
+function cs(id){ if(!S.cards[id]) S.cards[id]={b:0,due:0,seen:0}; return S.cards[id]; }
+function rollDay(){ if(S.day.key!==todayKey()){ S.day={key:todayKey(),newSeen:0,reviews:0}; } }
+
+let deckFilter='all';
+let tab='study';
+
+/* ================= GIAO DIỆN ================= */
+const $=q=>document.querySelector(q);
+const deckCards=d=>CARDS.filter(c=>deckFilter==='all'||c.deck===deckFilter||d&&c.deck===d);
+function activeCards(){ return CARDS.filter(c=>deckFilter==='all'||String(c.deck)===String(deckFilter)); }
+
+function renderChips(){
+  const el=$('#chips'); el.innerHTML='';
+  const mk=(key,label,count)=>{
+    const b=document.createElement('button');
+    b.className='chip'+(String(deckFilter)===String(key)?' on':'');
+    b.innerHTML=label+'<span class="n">'+count+'</span>';
+    b.onclick=()=>{ deckFilter=key; renderChips(); startSession(); if(tab==='quiz')startQuiz(true); };
+    el.appendChild(b);
+  };
+  mk('all','Tất cả',CARDS.length);
+  for(const d of Object.keys(DECKS)) mk(d,DECKS[d].name,CARDS.filter(c=>c.deck==d).length);
+}
+
+function updateTodayLine(){
+  rollDay();
+  const act=activeCards();
+  const due=act.filter(c=>{const s=S.cards[c.id];return s&&(s.due<=Date.now()||(s.seen>0&&s.b===0&&s.due<=Date.now()));}).length;
+  const unseen=act.filter(c=>!S.cards[c.id]).length;
+  const newLeft=Math.max(0,NEW_PER_DAY-S.day.newSeen);
+  const will=newLeft>0?Math.min(unseen,newLeft):0;
+  $('#todayLine').textContent='Hôm nay: '+S.day.reviews+' lượt ôn · sẵn sàng học '+(due+will)+' thẻ'+(tab==='study'?'':'');
+}
+
+/* ---------- HỌC ---------- */
+let ses=null;
+function buildQueue(cram){
+  rollDay();
+  const act=activeCards();
+  const due=act.filter(c=>{const s=S.cards[c.id];return s&&s.seen>0&&s.due<=Date.now();});
+  let news=[];
+  if(cram!==true){
+    const left=Math.max(0,NEW_PER_DAY-S.day.newSeen);
+    news=act.filter(c=>!S.cards[c.id]).slice(0,left);
+  } else { news=act.filter(c=>!S.cards[c.id]); }
+  return shuffle(due.concat(news).map(c=>c.id));
+}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function startSession(){
+  const q=buildQueue(false);
+  ses={queue:q,idx:0,forgot:0};
+  if(q.length===0) renderStudyEmpty(); else renderCard();
+}
+function startCram(){
+  const q=buildQueue(true);
+  ses={queue:q,idx:0,forgot:0};
+  if(q.length===0) renderStudyEmpty(); else renderCard();
+}
+function renderStudyEmpty(){
+  $('#view-study').innerHTML=
+    '<div class="emptybox"><div class="big">✅</div><h3>Hết thẻ đến hạn hôm nay</h3>'+
+    '<p>Bộ đang chọn không có thẻ nào đến hạn. Vừa học xong? Nghỉ xíu — quay lại ngày mai, Leitner sẽ tự nhắc lại.</p>'+
+    '<button class="btn ghost" id="cramBtn">Vẫn muốn ôn thêm (bỏ qua lịch)</button></div>';
+  $('#cramBtn').onclick=startCram;
+  $('#ratebar').classList.remove('show');
+}
+function renderCard(){
+  const id=ses.queue[ses.idx];
+  const c=CARDS.find(x=>x.id===id);
+  const total=ses.queue.length;
+  $('#view-study').innerHTML=
+    '<div class="session-head"><span>Thẻ <b>'+(ses.idx+1)+'</b> / '+total+'</span><span>đã quên: '+ses.forgot+'</span></div>'+
+    '<div class="pbar"><i style="width:'+Math.round(ses.idx/total*100)+'%"></i></div>'+
+    '<div class="cardwrap"><div class="fcard" id="fcard">'+
+      '<div class="face front">'+
+        '<span class="decktag">'+DECKS[c.deck].name+'</span>'+
+        '<div class="figbox">'+(FIGS[c.id]?FIGS[c.id]():'')+'</div>'+
+        '<div class="cname">'+c.name+'<span class="en">'+c.en+'</span></div>'+
+        '<div class="hint-flip">chạm vào thẻ để lật</div>'+
+      '</div>'+
+      '<div class="face back">'+
+        '<span class="decktag">'+DECKS[c.deck].name+' · '+c.name+'</span>'+
+        '<div class="b-title">Công dụng</div>'+
+        '<p class="use">'+c.use+'</p>'+
+        '<ul class="pts">'+c.pts.map(p=>'<li><span>'+p+'</span></li>').join('')+'</ul>'+
+      '</div>'+
+    '</div></div>';
+  const fc=$('#fcard');
+  fc.onclick=()=>{ fc.classList.toggle('flipped'); $('#ratebar').classList.toggle('show',fc.classList.contains('flipped')); };
+  $('#ratebar').classList.remove('show');
+  updateTodayLine();
+}
+function rate(r){
+  if(!ses)return;
+  const id=ses.queue[ses.idx];
+  const c=cs(id); const prev=c.seen;
+  c.seen=(c.seen||0)+1;
+  if(r===0){ c.b=0; c.due=Date.now(); ses.queue.push(id); ses.forgot++; }
+  else{
+    let nb = r===1?1:(r===2?c.b+1:c.b+2);
+    if(nb>5)nb=5;
+    c.b=nb; c.due=Date.now()+IVAL[nb]*864e5;
+  }
+  if(prev===0){ rollDay(); S.day.newSeen++; }
+  rollDay(); S.day.reviews++; S.totalReviews++; save();
+  ses.idx++;
+  if(ses.idx>=ses.queue.length) renderDone(); else renderCard();
+}
+function renderDone(){
+  $('#view-study').innerHTML=
+    '<div class="emptybox"><div class="big">🎯</div><h3>Xong phiên này!</h3>'+
+    '<p>'+ses.queue.length+' thẻ · '+ses.forgot+' lần «Quên». Leitner sẽ nhắc lại đúng lúc.</p>'+
+    '<button class="btn" id="againBtn">Học tiếp (thẻ đến hạn)</button></div>';
+  $('#againBtn').onclick=startSession;
+  $('#ratebar').classList.remove('show');
+  updateTodayLine();
+}
+
+/* ---------- KIỂM TRA ---------- */
+let qz=null;
+function shortUse(c){ const t=c.use.replace(/<[^>]+>/g,''); const cut=t.split('. '); return (cut[0].length>10?cut[0]:cut[1]||cut[0]).slice(0,130); }
+function startQuiz(keep){
+  if(!keep||!qz){
+    const pool=shuffle(activeCards().slice()).slice(0,10);
+    qz={order:pool,i:0,correct:0,wrong:[]};
+  }
+  renderQuiz();
+}
+function renderQuiz(){
+  if(qz.i>=qz.order.length){ return renderQuizEnd(); }
+  const c=qz.order[qz.i];
+  const others=CARDS.filter(x=>x.id!==c.id&&(deckFilter==='all'||x.deck===c.deck));
+  const distract=shuffle(others).slice(0,3);
+  const opts=shuffle(distract.concat([c]));
+  $('#view-quiz').innerHTML=
+    '<div class="quiz-top"><span>Câu <b>'+(qz.i+1)+'</b> / '+qz.order.length+'</span><span>đúng: '+qz.correct+'</span></div>'+
+    '<div class="quiz-card">'+
+      '<div class="quiz-fig">'+(FIGS[c.id]?FIGS[c.id]():'')+'</div>'+
+      '<div class="quiz-q">'+c.name+'<span class="en">'+c.en+'</span></div>'+
+      '<div class="quiz-ask">Công dụng / đặc điểm đúng là…?</div>'+
+      '<div class="opts" id="opts">'+opts.map(o=>'<button class="opt" data-id="'+o.id+'">'+shortUse(o)+'</button>').join('')+'</div>'+
+    '</div>';
+  document.querySelectorAll('#opts .opt').forEach(b=>{
+    b.onclick=()=>{
+      const ok=b.dataset.id===c.id;
+      if(ok){ qz.correct++; } else { qz.wrong.push({c:c,pick:CARDS.find(x=>x.id===b.dataset.id)}); }
+      document.querySelectorAll('#opts .opt').forEach(x=>{
+        x.disabled=true;
+        if(x.dataset.id===c.id)x.classList.add('ok');
+      });
+      if(!ok)b.classList.add('bad');
+      setTimeout(()=>{ qz.i++; renderQuiz(); },950);
+    };
+  });
+}
+function renderQuizEnd(){
+  const score=qz.correct,total=qz.order.length;
+  const best=Math.max(S.quizBest||0,score);
+  const improved=score>=best&&score>(S.quizBest||0);
+  S.quizBest=best; save();
+  $('#view-quiz').innerHTML=
+    '<div class="quiz-card">'+
+      '<div class="score-big"><span>'+score+'</span> / '+total+'</div>'+
+      '<p style="text-align:center;color:var(--text-secondary);font-size:13.5px">'+
+      (score>=9?'Xuất sắc — sẵn sàng lên mâm mổ 🔪':score>=7?'Tốt — giữ nhịp ôn mỗi ngày!':score>=5?'Khá ổn — xem lại các thẻ sai bên dưới':'Chưa ổn — quay lại tab Học, Leitner sẽ giúp')+
+      '</p>'+
+      '<p style="text-align:center;font-size:12.5px;color:var(--text-secondary)">Kỷ lục của bạn: <b>'+best+'/'+total+'</b>'+(improved?' 🎉':'')+'</p>'+
+      (qz.wrong.length?'<div class="wronglist">'+qz.wrong.map(w=>
+        '<div class="w"><b>'+w.c.name+' — '+w.c.en+'</b>Đáp án đúng: '+shortUse(w.c)+'</div>').join('')+'</div>':'')+
+      '<div style="display:flex;gap:8px;margin-top:16px"><button class="btn" style="flex:1" id="reQuiz">Làm lại</button>'+
+      '<button class="btn ghost" style="flex:1" id="goStudy">Qua tab Học</button></div>'+
+    '</div>';
+  $('#reQuiz').onclick=()=>startQuiz(false);
+  $('#goStudy').onclick=()=>switchTab('study');
+}
+
+/* ---------- THỐNG KÊ ---------- */
+function renderStats(){
+  rollDay();
+  let rows='';
+  for(const d of Object.keys(DECKS)){
+    const list=CARDS.filter(c=>c.deck==d);
+    let nw=0,ln=0,ms=0;
+    for(const c of list){ const s=S.cards[c.id];
+      if(!s||s.seen===0)nw++;
+      else if(s.b>=4)ms++;
+      else ln++;
+    }
+    const t=list.length;
+    rows+='<div class="srow"><div class="lbl"><b>'+DECKS[d].name+'</b><span>'+ms+' / '+t+' đã thuộc</span></div>'+
+      '<div class="bar"><i class="b-new" style="width:'+(nw/t*100)+'%"></i><i class="b-learn" style="width:'+(ln/t*100)+'%"></i><i class="b-master" style="width:'+(ms/t*100)+'%"></i></div></div>';
+  }
+  const mastered=CARDS.filter(c=>S.cards[c.id]&&S.cards[c.id].b>=4).length;
+  $('#view-stats').innerHTML=
+    '<div class="stat-card"><h3>Tiến độ từng bộ</h3>'+rows+
+      '<div class="legend"><span><i class="b-new"></i>chưa học</span><span><i class="b-learn"></i>đang học</span><span><i class="b-master"></i>đã thuộc (nút ≥ 4)</span></div></div>'+
+    '<div class="stat-card"><h3>Tổng quan</h3>'+
+      '<div class="kv"><span>Tổng số thẻ</span><b>'+CARDS.length+'</b></div>'+
+      '<div class="kv"><span>Đã thuộc</span><b>'+mastered+' / '+CARDS.length+'</b></div>'+
+      '<div class="kv"><span>Lượt ôn hôm nay</span><b>'+S.day.reviews+'</b></div>'+
+      '<div class="kv"><span>Tổng lượt ôn</span><b>'+S.totalReviews+'</b></div>'+
+      '<div class="kv"><span>Kỷ lục kiểm tra</span><b>'+(S.quizBest!==null?S.quizBest+'/10':'—')+'</b></div></div>'+
+    '<div class="stat-card"><h3>Sao lưu &amp; phục hồi tiến độ</h3>'+
+      '<p style="font-size:13px;color:var(--text-secondary);margin:0 0 12px">Tiến độ nằm trong trình duyệt của từng máy. Đổi máy / sợ mất dữ liệu: bấm <b>Sao lưu</b> rồi gửi đoạn mã cho chính mình (Zalo...); máy mới dán mã vào ô rồi bấm <b>Phục hồi</b>.</p>'+
+      '<div style="display:flex;gap:8px;margin-bottom:10px"><button class="btn" style="flex:1" id="backupBtn">Sao lưu tiến độ</button>'+
+      '<button class="btn ghost" style="flex:1" id="restoreBtn">Phục hồi</button></div>'+
+      '<textarea id="backupCode" rows="3" placeholder="Mã sao lưu sẽ hiện ở đây — hoặc dán mã vào đây để phục hồi" style="width:100%;border:1px solid var(--line-strong);border-radius:10px;padding:9px 10px;font-size:11px;font-family:monospace;background:var(--surface-2);color:var(--text);resize:vertical"></textarea>'+
+      '<div id="backupMsg" style="font-size:12.5px;color:var(--green);margin-top:6px;min-height:16px"></div></div>'+
+    '<div class="stat-card"><h3>Đặt lại</h3>'+
+      '<p style="font-size:13px;color:var(--text-secondary);margin:0 0 12px">Xóa toàn bộ tiến độ học (thẻ về mức chưa học, giữ chế độ sáng/tối).</p>'+
+      '<button class="btn ghost" id="resetBtn" style="background:var(--red-bg);color:var(--red);box-shadow:none;border:1.5px solid var(--red)">Xóa tiến độ</button></div>';
+  $('#resetBtn').onclick=()=>{
+    if(confirm('Xóa toàn bộ tiến độ học? Không hoàn tác được.')){
+      const dark=S.dark;
+      S={v:1,cards:{},day:{key:todayKey(),newSeen:0,reviews:0},totalReviews:0,quizBest:null,dark:dark};
+      save(); renderStats(); updateTodayLine();
+    }
+  };
+  /* sao lưu / phục hồi */
+  $('#backupBtn').onclick=()=>{
+    const code=btoa(unescape(encodeURIComponent(JSON.stringify(S))));
+    const ta=$('#backupCode'); ta.value=code; ta.readOnly=true; ta.select();
+    const msg=$('#backupMsg');
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(code).then(()=>{msg.textContent='✓ Đã tạo mã sao lưu và copy vào clipboard — gửi cho chính mình để giữ.';},
+        ()=>{msg.textContent='✓ Đã tạo mã sao lưu — copy thủ công ô bên trên.';});
+    } else { msg.textContent='✓ Đã tạo mã sao lưu — copy thủ công ô bên trên.'; }
+  };
+  $('#restoreBtn').onclick=()=>{
+    const ta=$('#backupCode'); const msg=$('#backupMsg'); const code=(ta.value||'').trim();
+    if(!code){ msg.style.color='var(--red)'; msg.textContent='Chưa có mã — dán mã sao lưu vào ô trống trước.'; return; }
+    try{
+      const obj=JSON.parse(decodeURIComponent(escape(atob(code))));
+      if(!obj||obj.v!==1||!obj.cards) throw new Error('invalid');
+      if(!confirm('Phục hồi sẽ GHI ĐÈ tiến độ hiện tại của máy này. Tiếp tục?')) return;
+      obj.dark=S.dark; S=obj; save();
+      msg.style.color='var(--green)'; msg.textContent='✓ Đã phục hồi: '+Object.keys(S.cards).length+' thẻ đã học, tổng '+S.totalReviews+' lượt ôn.';
+      updateTodayLine(); ses=null; startSession();
+    }catch(e){
+      msg.style.color='var(--red)'; msg.textContent='Mã không hợp lệ — kiểm tra đã copy đủ nguyên đoạn mã.';
+    }
+  };
+}
+
+/* ---------- TABS ---------- */
+function switchTab(t){
+  tab=t;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.tab===t));
+  $('#view-study').style.display=t==='study'?'':'none';
+  $('#view-quiz').style.display=t==='quiz'?'':'none';
+  $('#view-stats').style.display=t==='stats'?'':'none';
+  $('#ratebar').classList.remove('show');
+  if(t==='study'){ if(!ses||ses.idx>=(ses.queue||[]).length) startSession(); else renderCard(); }
+  if(t==='quiz'){ startQuiz(true); }
+  if(t==='stats'){ renderStats(); }
+  updateTodayLine();
+}
+
+/* ---------- KHỞI ĐỘNG ---------- */
+function applyDark(){ document.documentElement.classList.toggle('dark',!!S.dark); }
+$('#darkBtn').onclick=()=>{ S.dark=!S.dark; save(); applyDark(); };
+document.querySelectorAll('.tab').forEach(x=>x.onclick=()=>switchTab(x.dataset.tab));
+document.querySelectorAll('.ratebar .rbtn').forEach(b=>b.onclick=e=>{ e.stopPropagation(); rate(+b.dataset.r); });
+document.addEventListener('keydown',e=>{
+  if(tab!=='study'||!ses)return;
+  const fc=$('#fcard');
+  if(!fc)return;
+  if(e.code==='Space'){ e.preventDefault(); fc.click(); }
+  if(fc.classList.contains('flipped')&&['1','2','3','4'].includes(e.key)) rate(+e.key-1);
+});
+applyDark();
+renderChips();
+startSession();
+updateTodayLine();
+/* PWA: chỉ đăng ký service worker khi chạy qua http(s) — file local mở trực tiếp không cần */
+if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
+  navigator.serviceWorker.register('sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>
