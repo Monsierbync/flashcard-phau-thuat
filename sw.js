@@ -1,7 +1,7 @@
 /* Service worker — Flashcard Phẫu thuật
    Cache-first với fallback mạng; bump CACHE để user nhận bản mới sau khi deploy
    (activate sẽ dọn cache cũ; index.html luôn lấy mạng-ưu-tiên để không học nhầm bản cũ). */
-const CACHE = 'fc-pt-v1.1';
+const CACHE = 'fc-pt-v1.2';
 const SHELL = [
   './',
   './index.html',
