@@ -13,9 +13,9 @@
 <!--
   App flashcard kỹ thuật phẫu thuật — Thiên Phúc (Y6, chưa vào phòng mổ thực chiến)
   Mục tiêu mỗi ngày 15–20 phút: nhận diện dụng cụ + thuộc công dụng trước khi vào mổ thật.
-  Nội dung: 70 thẻ / 4 bộ — nguồn slide Ngoại cơ sở UMP (Huỳnh Bá Tấn, Trần Đức Huy),
+  Nội dung: 89 thẻ / 5 bộ — nguồn slide Ngoại cơ sở UMP (Huỳnh Bá Tấn, Trần Đức Huy),
   WHO Surgical Care at the District Hospital, QĐ 3916/QĐ-BYT. Xem "Tài liệu nguồn/".
-  Lộ trình ôn: Leitner (Quên/Khó/Tốt/Dễ → 0/1/2/4/7/14 ngày), tối đa 10 thẻ mới/ngày.
+  Lộ trình ôn: Leitner (Quên/Khó/Tốt/Dễ → 0/1/2/4/7/14 ngày), tối đa 15 thẻ mới/ngày.
 -->
 <style>
 :root{
@@ -243,7 +243,8 @@ const DECKS = {
   1:{name:"Dụng cụ", color:"var(--blue)"},
   2:{name:"Kim & chỉ", color:"#0e7490"},
   3:{name:"Nút & mũi khâu", color:"#6d28d9"},
-  4:{name:"Vô trùng & phòng mổ", color:"#b4560a"}
+  4:{name:"Vô trùng & phòng mổ", color:"#b4560a"},
+  5:{name:"Ống thông & dẫn lưu", color:"#9f1239"}
 };
 
 const CARDS = [
@@ -338,6 +339,12 @@ pts:["Loại thẳng (đóng/cắt) và loại tròn (nối hai đầu ruột)",
 {id:"probe",deck:1,name:"Que thăm dò & máng",en:"Probe & grooved director",
 use:"Que thám <b>đường dò, hốc mủ, lỗ rò</b> để biết đường đi trước khi rạch; máng có rãnh dẫn lưỡi dao mở theo hướng an toàn.",
 pts:["Đầu que tròn thông lòng — đưa nhẹ nhàng, không ép tạo «đường giả»","Máng: lưỡi dao trượt trên rãnh để mở dần vết rạch","Có sẵn trong bộ mổ áp-xe, mổ hậu môn — trực tràng, mổ hạch"]},
+{id:"suturescissors",deck:1,name:"Kéo cắt chỉ",en:"Suture scissors",
+use:"Kéo nhỏ chuyên <b>cắt chỉ</b> khi thắt nút / cắt chỉ da — <b>gờ lệch một bên</b> giữ chỉ không tuột khi cắt.",
+pts:["Gờ giữa hai lưỡi lệch về một bên — cắt chỉ gọn một nhát","Dùng riêng cho chỉ, giữ kéo mổ nguyên sắc","Tháo chỉ da: cắt sát nút, kéo chỉ ra theo đường kim vào"]},
+{id:"lister",deck:1,name:"Kéo Lister (kéo cắt băng)",en:"Lister bandage scissors",
+use:"Cắt <b>băng — gạc</b> trên người bệnh nhân: lưỡi dưới có mũi <b>nhô hứng</b> trượt dưới băng mà không cứa da.",
+pts:["Lưỡi dưới dài hơn, đầu tù cong lên như «mũi hứng»","Cắt băng gạc qua lại dọc chi — không cần lật bệnh nhân","Không dùng cắt mô — chuyên cắt băng"]},
 
 /* ---------- BỘ 2: KIM & CHỈ ---------- */
 {id:"vicryl",deck:2,name:"Chỉ Vicryl",en:"Polyglactin 910 · absorbable braided",
@@ -464,6 +471,59 @@ pts:["Lớp sâu: chỉ tiêu (Vicryl, PDS); da: nylon mũi rời hoặc dưới
 {id:"scrubnurse",deck:4,name:"Điều dưỡng mổ (run mổ)",en:"Scrub nurse",
 use:"Người <b>quản lý bàn dụng cụ</b> trong mổ: chuẩn bị bộ mổ, đọc — truyền dụng cụ khi được gọi tên, đếm gạc — kim, giữ vô khuẩn bàn mâm.",
 pts:["Mổ gọi «Kelly!», «Kim 3-0!» — điều dưỡng đưa đúng, đưa nhanh","Là «cửa ngõ vô khuẩn»: đồ lên mâm phải qua tay điều dưỡng","Người mới đi thực tập: đứng cạnh điều dưỡng để học tên dụng cụ — thao tác trước"]},
+
+/* ---------- BỘ 5: ỐNG THÔNG & DẪN LƯU (nguồn: Trần Đức Huy — Tổng quan dẫn lưu; slide UMP) ---------- */
+{id:"drainconcept",deck:5,name:"Dẫn lưu là gì?",en:"Drainage · drain",
+use:"Đặt <b>phương tiện dẫn lưu (ODL)</b> vào cơ quan, xoang hốc hay mô nhằm loại bỏ <b>khoảng chết, vật lạ và chất có hại</b> khỏi vùng mổ.",
+pts:["Cân nhắc đặt khi gần <b>hoàn tất cuộc mổ</b>","Vừa dự phòng biến chứng, vừa chẩn đoán (theo dõi dịch), vừa điều trị","Câu nói trong slide đáng nhớ: «ODL là liều thuốc ngủ cho phẫu thuật viên»","Tùy: loại phẫu thuật — tạng, nguy cơ biến chứng, kinh nghiệm phẫu thuật viên"]},
+{id:"draintypes",deck:5,name:"Dẫn lưu kín vs hở",en:"Closed vs open drainage",
+use:"<b>Kín</b>: ống nối về bình kín — <b>chủ động</b> (áp lực âm, máy hút) hoặc <b>thụ động</b> (chênh áp tự nhiên). <b>Hở</b>: miệng ống mở ra ngoài, dịch chảy tự do qua gạc.",
+pts:["Kín giảm nhiễm ngược chiều từ môi trường","Chủ động = hút mạnh, dọn được dịch nhiều nhanh","Hở đơn giản, nhưng đường dịch hở cần chăm sóc gạc thường xuyên"]},
+{id:"penrose",deck:5,name:"Ống dẫn lưu Penrose",en:"Penrose drain",
+use:"Ống cao su / silicon <b>mềm, dẹt</b> — dẫn lưu kiểu <b>mao dẫn</b>, dạng hở; thích hợp dịch lỏng, ít quánh.",
+pts:["Mềm, ít kích thích mô — đặt vùng mô delicate","Dịch thấm dọc ống và ra gạc phủ quanh chân ống","Không nối máy hút được — chỉ mao dẫn + trọng lực"]},
+{id:"cigarette",deck:5,name:"Dẫn lưu cigarette",en:"Cigarette drain",
+use:"Ống Penrose <b>có gạc trong lòng</b> — tăng mao dẫn và đệm mô; dẫn lưu hở đặt ngắn ngày.",
+pts:["Gạc ruột ống hút dịch bằng mao dẫn","Gạc bão hòa dịch → thay / rút sớm","Cổ truyền hay dùng vùng cổ, bẹn — nay ít hơn"]},
+{id:"drainregular",deck:5,name:"Ống dẫn lưu thường",en:"Standard drainage tube",
+use:"Ống tròn <b>nhiều lỗ bên</b>, kích thước đa dạng — cơ chế <b>chênh áp</b> là chính; loại ODL thường gặp nhất trên bàn mổ.",
+pts:["Nhiều lỗ bên: ống nghẹt lỗ này còn lỗ khác hút","Chọn cỡ theo loại dịch (quánh → ống to, hút âm)","Đếm — ghi rõ số ODL trong hồ sơ mổ"]},
+{id:"sumptube",deck:5,name:"Ống Sump",en:"Sump drain (dual lumen)",
+use:"Ống <b>kép 2 lòng</b>: khí vào phòng giữa giữ ống không bị bít, dịch được hút ra liên tục — cho dịch quánh, ổ apxe nhiều mủ.",
+pts:["Lòng trong hút, lòng ngoài dẫn khí vào","Không bị mô dính bịt đầu ống như ống đơn","Hệ sump + hút âm: dọn apxe bụng hiệu quả"]},
+{id:"frenchsize",deck:5,name:"Cỡ ống thông — French",en:"French scale (Charrière)",
+use:"Đơn vị cỡ ống thông: <b>1 F (Charrière) = 1/3 mm</b> đường kính — 30F = 10 mm. Số càng to, ống càng to.",
+pts:["French scale là đơn vị hay dùng nhất","Benique: 1 B = 1/6 mm (cũ, ít gặp)","UI: đo thẳng bằng mm","Thông tiểu người lớn thường 16–18F"]},
+{id:"drainmech",deck:5,name:"Cơ chế dẫn lưu",en:"Drainage mechanisms",
+use:"4 cơ chế: <b>chênh lệch áp lực</b> (trọng lực — đặt vị trí thấp theo tư thế; áp lực âm — máy hút; tăng áp trong khoang cơ thể) và <b>mao dẫn</b> (tùy dịch lỏng — quánh và dạng ODL).",
+pts:["Thực tế thường <b>kết hợp 2 cơ chế</b>","Trọng lực: đưa ODL ra điểm thấp nhất của khoang","Mao dẫn chỉ hiệu quả với dịch lỏng, ít hoại tử","Áp lực âm mạnh nhất nhưng cần bình hút kín"]},
+{id:"drainindication",deck:5,name:"Chỉ định đặt dẫn lưu",en:"Indications for drainage",
+use:"Đặt ODL khi: <b>áp xe — ổ nhiễm trùng</b>; mổ tạng rỗng <b>nguy xì / rò cao</b>; mổ <b>tạo khoang nhiều</b>; tạng <b>tiết dịch nhiều</b>; mổ <b>nhiễm — bẩn, cấp cứu</b>; và dự phòng cho chẩn đoán.",
+pts:["Hỏi mình: «mục đích đặt là gì?» — dự phòng, chẩn đoán hay điều trị","Không đặt ODL kiểu «cho chắc» — ODL cũng có biến chứng riêng","Câu hỏi này gần như lúc nào cũng được hỏi sau mổ"]},
+{id:"drainplacement",deck:5,name:"Nguyên tắc đặt ODL",en:"Drain placement principles",
+use:"Chọn ống: <b>mềm dễ uốn, ít kích thích mô, bền</b>. Đặt: <b>không qua đường mổ chính</b>, đường đi <b>ngắn nhất</b> ra ngoài, <b>không đi ngang mạch máu — ruột</b>, cố định đúng cách.",
+pts:["Lỗ ra riêng («đâm ra» cạnh vết mổ) — dịch không nhiễm vết mổ chính","Đường ngắn nhất = dẫn lưu tốt nhất, dễ chăm sóc","Cố định chỉ da + khoan cột an toàn — không để ống tuột vào trong"]},
+{id:"drainremoval",deck:5,name:"Khi nào rút dẫn lưu",en:"When to remove a drain",
+use:"Rút khi <b>đạt được mục đích</b> đặt: dẫn lưu dịch — <b>hết dịch, không còn tụ</b>; chẩn đoán xì rò — qua thời điểm nguy cơ; <b>chảy máu sau mổ — 24–48 giờ</b>; nhiễm trùng — tình trạng đã ổn định.",
+pts:["Rút sớm khi còn chỉ định = tụ dịch lại; rút muộn = nhiễm đường hầm","Rút nhanh dứt khoát trong một nhịp, ép dịch đường hầm ra","Ghi hồ sơ: rút ODL số mấy, ngày mấy"]},
+{id:"draincomplications",deck:5,name:"Biến chứng của ODL",en:"Drain complications",
+use:"<b>Nhiễm trùng chân ống — đường hầm — áp xe</b>; <b>chảy máu</b>; <b>tổn thương cơ quan</b> khi đặt; <b>sót ODL</b> trong cơ thể.",
+pts:["Chăm sóc chân ống vô khuẩn — đổi gạc quanh ống","Máu đỏ tươi ra tăng → nghĩ chảy máu, báo ngay","Sót ODL: lý do phải đếm — ghi số lượng ODL khi đặt VÀ khi rút"]},
+{id:"nelaton",deck:5,name:"Ống thông Nelaton / Robinson",en:"Nelaton / Robinson catheter",
+use:"Sonde thông tiểu <b>đặt — rút ngay</b>: đầu trơn tròn, cong nhẹ, không bóng giữ — dẫn nước tiểu ra bọng một lần.",
+pts:["Đầu vát tròn dễ đưa vào niệu đạo","Người nữ: 12–14F; người nam: 14–16F thường dùng","Robinson: dùng thông / dẫn lưu ổ sạch qua kim đặt"]},
+{id:"foley",deck:5,name:"Ống thông Foley",en:"Foley catheter (balloon)",
+use:"Sonde thông tiểu <b>có bóng cuff</b> bơm nước sterile giữ ống trong bọng — thông tiểu <b>lưu lại</b>; loại 3 nhánh (3-way) có thêm nhánh <b>rửa vào</b> — rửa bọng liên tục.",
+pts:["Nhánh riêng để bơm bóng (nước cất 5–10 ml tùy cỡ)","Bơm — xả bóng ĐỦ theo đánh dấu trên ống, không bơm quá","3-way hay dùng sau mổ tiền liệt tuyến, bọng chảy máu cần rửa liên tục","Bóng chưa xả mà kéo = chảy máu niệu đạo — lỗi kinh điển"]},
+{id:"pezzermalecot",deck:5,name:"Ống Pezzer / Malecot",en:"Pezzer / Malecot catheter",
+use:"Sonde đầu <b>nấm (Pezzer)</b> hoặc <b>cánh hoa (Malecot)</b> loe ra giữ ống trong bọng — thông bọng <b>lâu dài</b>, thường qua mổ mở bọng tiểu.",
+pts:["Đầu loe tự giữ — không cần bóng","Rút: nắn — kéo nhẹ, đầu mềm gập lại được","Gặp khi theo dõi BN mổ mở bọng, sau mổ tiền liệt tuyến"]},
+{id:"kehr",deck:5,name:"Ống thông Kehr (chữ T)",en:"Kehr T-tube",
+use:"ODL hình chữ T đặt vào <b>ống dẫn mật chính</b> sau mổ lấy sỏi đường mật: một nhánh lên gan, một nhánh xuống tá tràng, thân ra ngoài da.",
+pts:["Dẫn mật ra ngoài cho đường mật lành dần quanh ống","Trước rút: <b>thử kẹp</b> (BN không vàng — đau) + chụp X-quang đường mật qua ống","Chăm sóc: túa ống, ghi lượng dịch mật mỗi ngày","Thường rút sau 10–14 ngày khi lưu thông tốt"]},
+{id:"frazier",deck:5,name:"Đầu hút Frazier",en:"Frazier suction tip",
+use:"Đầu hút <b>nhỏ, mảnh</b> cho mổ tinh tế: tay, mặt, mạch máu — có <b>lỗ thông trên cán</b> chỉnh lực hút bằng ngón cái.",
+pts:["Bịt lỗ thông = hút mạnh nhất; mở ra giảm lực","Kèm cây thông ống khi nghẹt","So sánh: Yankauer to — Poole diện rộng — Frazier nhỏ tinh"]},
 ];
 
 /* ================= SVG — TỰ VẼ ================= */
@@ -715,6 +775,179 @@ function gScrubNurse(){
   s+=T(160,112,'«Kelly!» → đưa đúng — đưa nhanh',10.5);
   return SW(s,120);
 }
+/* — đợt 3: ống thông & dẫn lưu + kéo — */
+function gNelaton(){
+  let s=P('M40,52 C120,44 200,42 258,40',5);
+  s+=P('M40,52 c-12,1 -14,-11 -2,-13',5);
+  s+=C(70,48,2)+C(92,47,2);
+  s+=R(258,32,18,16,3)+P('M276,40 h24',4);
+  s+=T(150,84,'đầu trơn tròn — không bóng, đặt rồi rút',10.5);
+  return SW(s);
+}
+function gFoley(){
+  let s=P('M56,52 C130,44 210,42 258,40',5);
+  s+=P('M56,52 c-12,1 -14,-11 -2,-13',5);
+  s+='<ellipse cx="80" cy="48" rx="15" ry="10" stroke="var(--blue)" stroke-width="2.6"/>';
+  s+=C(60,48,2);
+  s+=P('M230,44 L230,20',3)+C(230,16,5);
+  s+=R(258,32,18,16,3)+P('M276,40 h24',4);
+  s+=T(210,84,'bóng cuff bơm nước + nhánh riêng để bơm',10.5);
+  return SW(s);
+}
+function gPezzerMalecot(){
+  let s=P('M80,50 C150,44 220,42 268,40',5);
+  s+=P('M80,50 C64,50 58,34 74,32 C70,18 92,14 96,28 C112,20 118,38 102,42 Z',3.4);
+  s+=R(268,32,18,16,3);
+  s+=T(160,84,'đầu nấm / cánh hoa — tự giữ trong bọng',10.5);
+  return SW(s);
+}
+function gPenrose(){
+  let s=P('M24,40 C110,28 210,56 300,42',3);
+  s+=P('M24,58 C110,46 210,74 300,60',3);
+  s+=P('M24,40 q-10,9 0,18',2.4);
+  s+=T(160,88,'lá cao su dẹt — mao dẫn, dạng hở',10.5);
+  return SW(s);
+}
+function gCigarette(){
+  let s=P('M24,40 C110,28 210,56 300,42',3);
+  s+=P('M24,58 C110,46 210,74 300,60',3);
+  s+='<g stroke-width="1.4" opacity=".85">';
+  for(let x=50;x<=280;x+=26){ s+=L(x,36,x+14,60,1.4); }
+  s+='</g>';
+  s+=P('M24,40 q-10,9 0,18',2.4);
+  s+=T(160,88,'Penrose + gạc trong lòng',10.5);
+  return SW(s);
+}
+function gDrainRegular(){
+  let s=P('M40,50 C130,44 210,42 262,40',5.5);
+  s+=C(78,46,2.6)+C(112,45,2.6)+C(146,44,2.6)+C(180,43,2.6);
+  s+=R(262,31,20,18,3)+P('M282,40 h18',4);
+  s+=T(160,86,'nhiều lỗ bên — cơ chế chênh áp',10.5);
+  return SW(s);
+}
+function gSump(){
+  let s=P('M36,38 C130,32 210,30 262,28',4);
+  s+=P('M36,62 C130,68 210,70 262,72',4);
+  s+=P('M36,50 C130,46 200,44 240,42',2.6);
+  s+=R(262,24,20,52,4);
+  s+='<g '+ACC+' stroke-width="2">'+L(96,30,96,18,2)+P('M96,18 l-5,8 h10 z',1.2,'fill="var(--blue)"')+'</g>';
+  s+=T(150,92,'ống kép: khí vào giữa — hút ra lòng trong',10);
+  return SW(s);
+}
+function gFrenchSize(){
+  let s=L(50,26,250,26,3)+T(276,30,'10F≈3,3mm',9.5);
+  s+=L(50,54,250,54,6)+T(276,58,'20F≈6,7mm',9.5);
+  s+=L(50,86,250,86,10)+T(276,90,'30F=10mm',9.5);
+  s+=T(150,12,'1F = 1/3 mm đường kính',10.5);
+  return SW(s,102);
+}
+function gDrainConcept(){
+  let s='<g stroke-dasharray="4 4" opacity=".6">'+E(90,50,46,26)+'</g>';
+  s+=P('M70,56 q20,10 40,0',1.6,'opacity=".7"');
+  s+=P('M136,50 C200,50 240,44 268,40',4.5);
+  s+=L(160,10,160,90,1.4);
+  s+=C(284,34,2.6,true)+C(292,44,2.2,true);
+  s+=T(90,92,'khoang dịch',10)+T(230,20,'ra ngoài',10);
+  return SW(s,104);
+}
+function gDrainTypes(){
+  let s=L(160,12,160,88,1.4);
+  s+=P('M30,44 h70',4)+R(100,34,50,20,3)+P('M150,44 h0',0);
+  s+='<g '+ACC+' stroke-width="2">'+P('M125,56 v12',2)+P('M120,64 l5,7 l5,-7',2)+'</g>';
+  s+=T(105,72,'bình kín — hút',10);
+  s+=P('M190,44 h60',4);
+  s+=R(250,38,40,26,3)+L(258,44,282,44,1.4)+L(258,52,282,52,1.4);
+  s+=C(268,60,2,true)+C(276,60,2,true);
+  s+=T(95,20,'KÍN',12)+T(240,20,'HỞ',12);
+  s+=T(95,88,'chủ động / thụ động',10)+T(240,88,'dịch chảy ra gạc',10);
+  return SW(s,100);
+}
+function gDrainMech(){
+  let s=P('M20,30 L70,54',3)+P('M70,54 l-11,-2 m11,2 l-4,-10',2);
+  s+=T(45,72,'trọng lực',9.5);
+  s+=E(120,34,10,10)+E(120,52,16,16);
+  s+='<g '+ACC+' stroke-width="2">'+L(120,44,120,48,2)+'</g>';
+  s+=T(120,78,'chênh áp',9.5);
+  s+=C(200,42,14)+P('M194,42 h12',2.4)+P('M206,42 l-4,-4 m4,4 l-4,4',2);
+  s+=T(200,72,'áp lực âm',9.5);
+  s+=L(256,54,256,26,3)+C(256,22,4,true);
+  s+=T(270,72,'mao dẫn',9.5);
+  return SW(s,88);
+}
+function gDrainIndication(){
+  let s=R(120,16,120,72,8);
+  s+='<g stroke-width="2">'+L(140,34,220,34,2)+L(140,50,220,50,2)+L(140,66,220,66,2)+L(140,80,220,80,2)+'</g>';
+  s+=C(134,31,3,true)+C(134,47,3,true)+C(134,63,3,true)+C(134,77,3,true);
+  s+=T(55,30,'• áp xe',9.5)+T(55,44,'• tạng rỗng',9.5)+T(55,58,'• tạo khoang',9.5)+T(55,72,'• mổ nhiễm',9.5);
+  s+=T(180,8,'chỉ định',10.5);
+  return SW(s,96);
+}
+function gDrainPlacement(){
+  let s=P('M20,72 C100,26 220,26 300,72',3);
+  s+='<g '+ACC+' stroke-width="4">'+L(150,37,150,50,4)+'</g>';
+  s+=P('M206,48 C240,44 262,30 284,14',3.6);
+  s+='<g stroke="var(--red)" stroke-width="2.4">'+L(206,60,224,44,2.4)+L(224,60,206,44,2.4)+'</g>';
+  s+=T(110,92,'vết mổ chính',9.5)+T(150,24,'✕ mạch — ruột',9);
+  s+=T(258,60,'lỗ đâm ra riêng',9.5);
+  return SW(s,102);
+}
+function gDrainRemoval(){
+  let s=L(40,50,280,50,2.6);
+  s+=C(90,50,8)+T(90,30,'24–48h',9.5)+T(90,72,'hết chảy máu',9);
+  s+=C(160,50,8)+T(160,30,'dịch hết',9.5)+T(160,72,'không tụ dịch',9);
+  s+=C(230,50,8)+T(230,30,'ổn định',9.5)+T(230,72,'nhiễm trứng ổn',9);
+  s+='<g '+ACC+'>'+P('M270,42 l14,8 l-14,8',2.4)+'</g>';
+  s+=T(160,92,'đạt mục đích → rút',10.5);
+  return SW(s,100);
+}
+function gDrainComplications(){
+  let s=P('M24,50 C110,44 200,42 262,40',4.5);
+  s+=R(262,32,20,16,3);
+  s+='<g stroke="var(--red)" stroke-width="2.2">';
+  s+=P('M84,36 q10,-8 20,0 q10,8 20,0',2.2);
+  s+=P('M84,64 q10,8 20,0 q10,-8 20,0',2.2);
+  s+='</g>';
+  s+=C(140,26,3,'fill="var(--red)" stroke="none"')+C(150,26,2.4,true)+C(160,26,2,true);
+  s+=T(150,16,'chảy máu',9);
+  s+=T(210,72,'nhiễm chân ống — đường hầm',9.5);
+  s+=T(210,88,'tổn thương cơ quan · sót ODL',9.5);
+  return SW(s,100);
+}
+function gSutureScissors(){
+  let s=L(30,42,150,44,3.4)+L(30,54,150,50,3.4);
+  s+=C(150,47,4.5);
+  s+=L(150,44,222,26,3)+L(150,50,222,68,3)+E(244,23,17,9)+E(244,68,17,9);
+  s+=C(200,50,26);
+  s+='<g '+ACC+' stroke-width="2.4">'+L(188,40,212,40)+L(188,50,212,50)+'</g>';
+  s+=T(150,88,'gờ lệch một bên — giữ chỉ khi cắt',10);
+  return SW(s);
+}
+function gLister(){
+  let s=L(34,46,150,44,3.4);
+  s+=P('M34,58 L120,54 L120,46 q10,-2 12,6',3.4);
+  s+=C(150,50,4.5);
+  s+=L(150,44,222,26,3)+L(150,54,222,72,3)+E(244,23,17,9)+E(244,72,17,9);
+  s+='<g '+ACC+' stroke-width="2.6">'+P('M132,52 q10,12 22,4',2.6)+'</g>';
+  s+=T(160,90,'lưỡi dưới nhô «mũi hứng» — không cứa da',10);
+  return SW(s);
+}
+function gKehr(){
+  let s=L(60,38,262,38,5);
+  s+=P('M160,38 L160,88',4.5);
+  s+=P('M56,38 q-8,0 -8,-6',4)+P('M266,38 q8,0 8,-6',4);
+  s+=C(160,80,2.6);
+  s+=T(160,104,'chữ T — 2 nhánh trong đường mật, thân ra da',10);
+  return SW(s,114);
+}
+function gFrazier(){
+  let s=L(36,50,210,46,2.6);
+  s+=P('M30,50 c-8,0 -8,-8 0,-8',2.6);
+  s+=C(64,48,1.8);
+  s+=P('M210,46 L258,44',4);
+  s+=E(280,42,14,9)+C(244,38,3);
+  s+=T(150,80,'nhỏ mảnh — lỗ thông chỉnh lực hút',10);
+  return SW(s);
+}
 /* — chỉ & kim — */
 function gThread(braided,label){
   let s='M30,62 C70,20 122,20 152,56 C182,92 242,92 282,50 C292,38 282,26 270,33';
@@ -942,13 +1175,19 @@ const FIGS={
   crile:gCrile, carmalt:gCarmalt, kuttner:gKuttner, backhaus:gBackhaus,
   farabeuf:gFarabeuf, richardson:gRichardson, malleable:gMalleable, poole:gPoole,
   diathermy:gDiathermy, harmonic:gHarmonic, stapler:gStapler, probe:gProbe,
-  fig8:gFig8, pursestring:gPurse, lembert:gLembert, layers:gLayers, scrubnurse:gScrubNurse
+  fig8:gFig8, pursestring:gPurse, lembert:gLembert, layers:gLayers, scrubnurse:gScrubNurse,
+  suturescissors:gSutureScissors, lister:gLister,
+  drainconcept:gDrainConcept, draintypes:gDrainTypes, penrose:gPenrose, cigarette:gCigarette,
+  drainregular:gDrainRegular, sumptube:gSump, frenchsize:gFrenchSize, drainmech:gDrainMech,
+  drainindication:gDrainIndication, drainplacement:gDrainPlacement, drainremoval:gDrainRemoval,
+  draincomplications:gDrainComplications, nelaton:gNelaton, foley:gFoley,
+  pezzermalecot:gPezzerMalecot, kehr:gKehr, frazier:gFrazier
 };
 
 /* ================= TRẠNG THÁI & LƯU TRỮ ================= */
 const KEY='fc_phauthuat_v1';
 const IVAL=[0,1,2,4,7,14]; /* ngày theo box 0..5 */
-const NEW_PER_DAY=10;
+const NEW_PER_DAY=15;
 const todayKey=()=>new Date().toISOString().slice(0,10);
 let S=load();
 function load(){

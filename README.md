@@ -3,8 +3,8 @@
 App flashcard học **kỹ thuật phẫu thuật cơ bản** cho người chuẩn bị vào phòng mổ lần đầu
 (dụng cụ · kim chỉ · nút & mũi khâu · vô trùng & quy trình phòng mổ).
 
-- **70 thẻ / 4 bộ**, hình minh họa SVG tự vẽ, thuật ngữ song ngữ Việt–Anh theo cách gọi tại phòng mổ VN.
-- **Leitner**: Quên/Khó/Tốt/Dễ → nhắc lại 0/1/2/4/7/14 ngày, tối đa 10 thẻ mới/ngày (~15–20 phút/ngày).
+- **89 thẻ / 5 bộ** (Dụng cụ · Kim & chỉ · Nút & mũi khâu · Vô trùng & phòng mổ · Ống thông & dẫn lưu), hình minh họa SVG tự vẽ, thuật ngữ song ngữ Việt–Anh theo cách gọi tại phòng mổ VN.
+- **Leitner**: Quên/Khó/Tốt/Dễ → nhắc lại 0/1/2/4/7/14 ngày, tối đa 15 thẻ mới/ngày (~20 phút/ngày).
 - **PWA**: cài lên màn hình chính điện thoại, chạy offline sau lần mở đầu.
 - **Sao lưu tiến độ**: tab Thống kê → xuất/nạp mã sao lưu khi đổi máy.
 - Tiến độ lưu trong localStorage của từng thiết bị.
