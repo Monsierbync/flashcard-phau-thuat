@@ -15,7 +15,8 @@
   Mục tiêu mỗi ngày 15–20 phút: nhận diện dụng cụ + thuộc công dụng trước khi vào mổ thật.
   Nội dung: 97 thẻ / 5 bộ — nguồn slide Ngoại cơ sở UMP (Huỳnh Bá Tấn, Trần Đức Huy),
   WHO Surgical Care at the District Hospital, QĐ 3916/QĐ-BYT. Xem "Tài liệu nguồn/".
-  Lộ trình ôn: Leitner (Quên/Khó/Tốt/Dễ → 0/1/2/4/7/14 ngày), tối đa 15 thẻ mới/ngày.
+  Lộ trình ôn — SPRINT 1 TUẦN theo cong lãng quên: 20 thẻ mới/ngày (hết thẻ mới ngày 5),
+  nhịp ôn 1-2-3-5-8 ngày → mỗi thẻ được chạm lại 3-4 lần trong tuần, đúng trước khi quên.
 -->
 <style>
 :root{
@@ -224,10 +225,10 @@ footer.src{max-width:760px;margin:0 auto;padding:16px 12px 40px;font-size:11.5px
 </main>
 
 <div class="ratebar" id="ratebar">
-  <button class="rbtn r-forgot" data-r="0">Quên<small>học lại ngay</small></button>
-  <button class="rbtn r-hard" data-r="1">Khó<small>1 ngày</small></button>
-  <button class="rbtn r-good" data-r="2">Tốt<small>2 ngày</small></button>
-  <button class="rbtn r-easy" data-r="3">Dễ<small>7+ ngày</small></button>
+  <button class="rbtn r-forgot" data-r="0">Quên<small id="r0s">học lại ngay</small></button>
+  <button class="rbtn r-hard" data-r="1">Khó<small id="r1s">1 ngày</small></button>
+  <button class="rbtn r-good" data-r="2">Tốt<small id="r2s">2 ngày</small></button>
+  <button class="rbtn r-easy" data-r="3">Dễ<small id="r3s">3 ngày</small></button>
 </div>
 
 <footer class="src">
@@ -1294,8 +1295,8 @@ const FIGS={
 
 /* ================= TRẠNG THÁI & LƯU TRỮ ================= */
 const KEY='fc_phauthuat_v1';
-const IVAL=[0,1,2,4,7,14]; /* ngày theo box 0..5 */
-const NEW_PER_DAY=15;
+const IVAL=[0,1,2,3,5,8]; /* ngày theo box 0..5 — nhịp cong lãng quên cho sprint 1 tuần */
+const NEW_PER_DAY=20;
 const todayKey=()=>new Date().toISOString().slice(0,10);
 let S=load();
 function load(){
@@ -1337,7 +1338,9 @@ function updateTodayLine(){
   const unseen=act.filter(c=>!S.cards[c.id]).length;
   const newLeft=Math.max(0,NEW_PER_DAY-S.day.newSeen);
   const will=newLeft>0?Math.min(unseen,newLeft):0;
-  $('#todayLine').textContent='Hôm nay: '+S.day.reviews+' lượt ôn · sẵn sàng học '+(due+will)+' thẻ'+(tab==='study'?'':'');
+  let t='Hôm nay: '+S.day.reviews+' lượt ôn · sẵn sàng học '+(due+will)+' thẻ';
+  if(unseen>0) t+=' · còn '+unseen+' thẻ chưa học';
+  $('#todayLine').textContent=t;
 }
 
 /* ---------- HỌC ---------- */
@@ -1365,9 +1368,24 @@ function startCram(){
   if(q.length===0) renderStudyEmpty(); else renderCard();
 }
 function renderStudyEmpty(){
+  rollDay();
+  const act=activeCards();
+  const unseen=act.filter(c=>!S.cards[c.id]).length;
+  const newLeft=Math.max(0,NEW_PER_DAY-S.day.newSeen);
+  let title,msg;
+  if(unseen>0&&newLeft===0){
+    title='Đủ '+NEW_PER_DAY+' thẻ mới cho hôm nay';
+    msg='Còn <b>'+unseen+' thẻ chưa học</b> — mai Leitner tự tiếp tục (sprint ~1 tuần là xong vòng 1). Cần tăng tốc thì ôn thêm bên dưới, nhớ nghỉ cho não ghi nhớ.';
+  } else if(unseen===0){
+    title='Đã học hết vòng 1 — giờ là giai đoạn củng cố';
+    msg='97 thẻ đều đã gặp. Từ nay chỉ còn nhắc lại đúng nhịp cong lãng quên — giữ đều mỗi ngày là thuộc lâu.';
+  } else {
+    title='Hết thẻ đến hạn hôm nay';
+    msg='Bộ đang chọn không còn thẻ đến hạn. Vừa học xong? Nghỉ xíu — Leitner sẽ nhắc lại đúng lúc.';
+  }
   $('#view-study').innerHTML=
-    '<div class="emptybox"><div class="big">✅</div><h3>Hết thẻ đến hạn hôm nay</h3>'+
-    '<p>Bộ đang chọn không có thẻ nào đến hạn. Vừa học xong? Nghỉ xíu — quay lại ngày mai, Leitner sẽ tự nhắc lại.</p>'+
+    '<div class="emptybox"><div class="big">✅</div><h3>'+title+'</h3>'+
+    '<p>'+msg+'</p>'+
     '<button class="btn ghost" id="cramBtn">Vẫn muốn ôn thêm (bỏ qua lịch)</button></div>';
   $('#cramBtn').onclick=startCram;
   $('#ratebar').classList.remove('show');
@@ -1396,6 +1414,11 @@ function renderCard(){
   const fc=$('#fcard');
   fc.onclick=()=>{ fc.classList.toggle('flipped'); $('#ratebar').classList.toggle('show',fc.classList.contains('flipped')); };
   $('#ratebar').classList.remove('show');
+  /* nhãn nút hiện số ngày THẬT theo box hiện tại của thẻ này */
+  const bx=S.cards[id]?S.cards[id].b:0;
+  $('#r1s').textContent=IVAL[1]+' ngày';
+  $('#r2s').textContent=IVAL[Math.min(5,bx+1)]+' ngày';
+  $('#r3s').textContent=IVAL[Math.min(5,bx+2)]+' ngày';
   updateTodayLine();
 }
 function rate(r){
